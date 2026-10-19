@@ -1,0 +1,82 @@
+{
+  "id": "generic_warm_water_demo_v1",
+  "label": "Generic warm-water pond aquaculture — demonstration settings",
+  "status": "demonstration_settings",
+  "validated": false,
+  "applies_to": "Warm-water freshwater finfish ponds (e.g. Indian major carps, tilapia, pangasius). Not tuned for shrimp, brackish water, hatcheries or any specific species.",
+  "notes": "Bands are informed by commonly cited general ranges in warm-water pond aquaculture literature (e.g. Boyd, C.E., Water Quality in Ponds for Aquaculture, 1990). The exact numbers in this file have NOT been checked against a specific published table for any species or for coastal Karnataka conditions. A qualified fisheries professional must review them before any real use.",
+  "source_label": "Demonstration setting — informed by general warm-water aquaculture guidance; not validated",
+  "parameters": {
+    "ph": {
+      "label": "pH",
+      "unit": "pH units",
+      "bands": [
+        {"status": "danger", "max": 6.0},
+        {"status": "watch", "min": 6.0, "max": 6.5},
+        {"status": "safe", "min": 6.5, "max": 9.0},
+        {"status": "watch", "min": 9.0, "max": 9.5},
+        {"status": "danger", "min": 9.5}
+      ]
+    },
+    "water_temp_c": {
+      "label": "Water temperature",
+      "unit": "°C",
+      "bands": [
+        {"status": "danger", "max": 20.0},
+        {"status": "watch", "min": 20.0, "max": 25.0},
+        {"status": "safe", "min": 25.0, "max": 32.0},
+        {"status": "watch", "min": 32.0, "max": 34.0},
+        {"status": "danger", "min": 34.0}
+      ]
+    },
+    "dissolved_oxygen_mg_l": {
+      "label": "Dissolved oxygen",
+      "unit": "mg/L",
+      "bands": [
+        {"status": "danger", "max": 3.0},
+        {"status": "watch", "min": 3.0, "max": 5.0},
+        {"status": "safe", "min": 5.0}
+      ]
+    },
+    "unionized_ammonia_mg_l": {
+      "label": "Un-ionised ammonia (derived from TAN, pH and temperature)",
+      "unit": "mg/L NH3-N",
+      "bands": [
+        {"status": "safe", "max": 0.05},
+        {"status": "watch", "min": 0.05, "max": 0.2},
+        {"status": "danger", "min": 0.2}
+      ]
+    },
+    "total_ammonia_mg_l": {
+      "label": "Total ammonia nitrogen (fallback when pH or temperature is missing)",
+      "unit": "mg/L TAN-N",
+      "bands": [
+        {"status": "safe", "max": 1.0},
+        {"status": "watch", "min": 1.0, "max": 2.0},
+        {"status": "danger", "min": 2.0}
+      ]
+    },
+    "nitrite_mg_l": {
+      "label": "Nitrite",
+      "unit": "mg/L NO2-N",
+      "bands": [
+        {"status": "safe", "max": 0.3},
+        {"status": "watch", "min": 0.3, "max": 1.0},
+        {"status": "danger", "min": 1.0}
+      ]
+    }
+  },
+  "symptoms": {
+    "gasping_at_surface": {"status": "danger", "category": "oxygen", "explanation": "Fish gulping at the surface is a common sign of low dissolved oxygen."},
+    "abnormal_mortality": {"status": "danger", "category": "mortality", "explanation": "Unusual deaths need prompt inspection by a fisheries professional."},
+    "erratic_swimming": {"status": "watch", "category": "behaviour", "explanation": "Erratic swimming can accompany water-quality stress or disease."},
+    "reduced_feeding": {"status": "watch", "category": "behaviour", "explanation": "Reduced feeding is an early, non-specific stress sign."},
+    "lethargy": {"status": "watch", "category": "behaviour", "explanation": "Sluggish fish are a non-specific stress sign."},
+    "red_patches_or_lesions": {"status": "watch", "category": "disease_sign", "explanation": "Red patches or ulcers may be associated with infection; diagnosis needs a professional."},
+    "white_spots": {"status": "watch", "category": "disease_sign", "explanation": "White spots may be associated with parasites; diagnosis needs a professional."},
+    "fin_or_tail_rot": {"status": "watch", "category": "disease_sign", "explanation": "Eroded fins or tails may be associated with infection; diagnosis needs a professional."},
+    "cotton_like_growth": {"status": "watch", "category": "disease_sign", "explanation": "Cotton-like growth may be associated with fungal infection; diagnosis needs a professional."},
+    "bloated_abdomen": {"status": "watch", "category": "disease_sign", "explanation": "Abdominal swelling has several possible causes; diagnosis needs a professional."}
+  },
+  "multiple_disease_signs_danger_count": 2
+}
