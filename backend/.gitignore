@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.env
+
+# local demo database
+data/*.db
+data/*.db-journal
+
+# datasets are never committed — see docs/DATASETS.md
+data/raw/*
+!data/raw/README.md
+data/processed/
+
+# generated model artifacts and evaluation reports
+artifacts/*
+!artifacts/README.md

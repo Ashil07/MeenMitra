@@ -1,0 +1,16 @@
+[project]
+name = "meenmitra-backend"
+version = "0.1.0"
+description = "MeenMitra hackathon MVP backend: demo oxygen-risk forecast, water-quality rules, mock alerts and ML workspace."
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["error::DeprecationWarning:app.*", "error::DeprecationWarning:ml.*"]
+
+[tool.mypy]
+python_version = "3.11"
+packages = ["app", "ml"]
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
