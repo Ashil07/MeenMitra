@@ -1,0 +1,90 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/alerts/alert_demo_003/acknowledge",
+    "body": {
+      "response": "seen",
+      "channel": "whatsapp"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "data": {
+        "id": "alert_demo_003",
+        "pond_id": "pond_demo_001",
+        "pond_name": "Demo Pond A1 (carp)",
+        "source_type": "forecast",
+        "source_id": "fc_demo_002",
+        "severity": "watch",
+        "title": {
+          "en": "Overnight oxygen risk: watch (demo)",
+          "kn": "ರಾತ್ರಿ ಆಮ್ಲಜನಕ ಅಪಾಯ – ಗಮನಿಸಿ (ಡೆಮೊ)"
+        },
+        "message": {
+          "en": "MeenMitra DEMO notice: the simulated overnight oxygen-risk index for Demo Pond A1 (carp) is MODERATE (highest around 18:00). Keep aerators ready, avoid overfeeding this evening and check fish at dawn. This is a demo estimate, not a measurement.",
+          "kn": "ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಸೂಚನೆ: Demo Pond A1 (carp) ಕೊಳದಲ್ಲಿ ಇಂದು ರಾತ್ರಿ ಆಮ್ಲಜನಕ ಕೊರತೆಯ ಅಂದಾಜು ಅಪಾಯ ಮಧ್ಯಮ ಮಟ್ಟದಲ್ಲಿದೆ (ಸುಮಾರು 18:00 ಸಮಯಕ್ಕೆ ಗರಿಷ್ಠ). ಏರೇಟರ್ ಸಿದ್ಧವಾಗಿಡಿ, ಸಂಜೆ ಹೆಚ್ಚು ಆಹಾರ ನೀಡಬೇಡಿ ಮತ್ತು ಬೆಳಗಿನ ಜಾವ ಮೀನುಗಳನ್ನು ಪರಿಶೀಲಿಸಿ. ಇದು ಡೆಮೊ ಅಂದಾಜು, ನಿಜವಾದ ಅಳತೆ ಅಲ್ಲ."
+        },
+        "voice_script": {
+          "en": "This is a MeenMitra demo call. MeenMitra DEMO notice: the simulated overnight oxygen-risk index for Demo Pond A1 (carp) is MODERATE (highest around 18:00). Keep aerators ready, avoid overfeeding this evening and check fish at dawn. This is a demo estimate, not a measurement.",
+          "kn": "ಇದು ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಕರೆ. ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಸೂಚನೆ: Demo Pond A1 (carp) ಕೊಳದಲ್ಲಿ ಇಂದು ರಾತ್ರಿ ಆಮ್ಲಜನಕ ಕೊರತೆಯ ಅಂದಾಜು ಅಪಾಯ ಮಧ್ಯಮ ಮಟ್ಟದಲ್ಲಿದೆ (ಸುಮಾರು 18:00 ಸಮಯಕ್ಕೆ ಗರಿಷ್ಠ). ಏರೇಟರ್ ಸಿದ್ಧವಾಗಿಡಿ, ಸಂಜೆ ಹೆಚ್ಚು ಆಹಾರ ನೀಡಬೇಡಿ ಮತ್ತು ಬೆಳಗಿನ ಜಾವ ಮೀನುಗಳನ್ನು ಪರಿಶೀಲಿಸಿ. ಇದು ಡೆಮೊ ಅಂದಾಜು, ನಿಜವಾದ ಅಳತೆ ಅಲ್ಲ."
+        },
+        "status": "acknowledged",
+        "created_at": "2026-10-01T02:30:00Z",
+        "updated_at": "2026-10-01T05:00:00Z",
+        "deliveries": [
+          {
+            "id": "dlv_7071b6c83c0d",
+            "channel": "whatsapp",
+            "language": "kn",
+            "message": "ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಸೂಚನೆ: Demo Pond A1 (carp) ಕೊಳದಲ್ಲಿ ಇಂದು ರಾತ್ರಿ ಆಮ್ಲಜನಕ ಕೊರತೆಯ ಅಂದಾಜು ಅಪಾಯ ಮಧ್ಯಮ ಮಟ್ಟದಲ್ಲಿದೆ (ಸುಮಾರು 18:00 ಸಮಯಕ್ಕೆ ಗರಿಷ್ಠ). ಏರೇಟರ್ ಸಿದ್ಧವಾಗಿಡಿ, ಸಂಜೆ ಹೆಚ್ಚು ಆಹಾರ ನೀಡಬೇಡಿ ಮತ್ತು ಬೆಳಗಿನ ಜಾವ ಮೀನುಗಳನ್ನು ಪರಿಶೀಲಿಸಿ. ಇದು ಡೆಮೊ ಅಂದಾಜು, ನಿಜವಾದ ಅಳತೆ ಅಲ್ಲ.",
+            "attempt_number": 1,
+            "attempted_at": "2026-10-01T05:00:00Z",
+            "status": "simulated_delivered",
+            "provider_mode": "mock",
+            "provider_name": "mock-offline",
+            "recipient_masked": "•••••• 0001",
+            "error": null,
+            "retry_allowed": false,
+            "simulated": true,
+            "external_request_made": false,
+            "simulated_call_duration_s": null
+          },
+          {
+            "id": "dlv_5bc12774cfbf",
+            "channel": "sms",
+            "language": "kn",
+            "message": "ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಸೂಚನೆ: Demo Pond A1 (carp) ಕೊಳದಲ್ಲಿ ಇಂದು ರಾತ್ರಿ ಆಮ್ಲಜನಕ ಕೊರತೆಯ ಅಂದಾಜು ಅಪಾಯ ಮಧ್ಯಮ ಮಟ್ಟದಲ್ಲಿದೆ (ಸುಮಾರು 18:00 ಸಮಯಕ್ಕೆ ಗರಿಷ್ಠ). ಏರೇಟರ್ ಸಿದ್ಧವಾಗಿಡಿ, ಸಂಜೆ ಹೆಚ್ಚು ಆಹಾರ ನೀಡಬೇಡಿ ಮತ್ತು ಬೆಳಗಿನ ಜಾವ ಮೀನುಗಳನ್ನು ಪರಿಶೀಲಿಸಿ. ಇದು ಡೆಮೊ ಅಂದಾಜು, ನಿಜವಾದ ಅಳತೆ ಅಲ್ಲ.",
+            "attempt_number": 1,
+            "attempted_at": "2026-10-01T05:00:00Z",
+            "status": "simulated_failed",
+            "provider_mode": "mock",
+            "provider_name": "mock-offline",
+            "recipient_masked": "•••••• 0001",
+            "error": {
+              "code": "simulated_failure",
+              "message": "Demo-requested failure on the sms channel (no real network involved)."
+            },
+            "retry_allowed": true,
+            "simulated": true,
+            "external_request_made": false,
+            "simulated_call_duration_s": null
+          }
+        ],
+        "acknowledgement": {
+          "acknowledged_at": "2026-10-01T05:00:00Z",
+          "response": "seen",
+          "channel": "whatsapp",
+          "note": null
+        },
+        "template_review_status": "unreviewed_draft",
+        "is_demo_record": true
+      },
+      "meta": {
+        "generated_at": "2026-10-01T05:00:00Z",
+        "demo_mode": true,
+        "api_version": "v1"
+      }
+    }
+  }
+}

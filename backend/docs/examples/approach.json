@@ -1,0 +1,247 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/approach",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "data": {
+        "title": "MeenMitra proposed hybrid pipeline",
+        "summary": "From pond and weather inputs to a demo overnight oxygen-risk index, water-quality rules, simulated alerts and farmer feedback. Statuses below are computed from the running system.",
+        "stages": [
+          {
+            "id": "farmer_pond_inputs",
+            "order": 1,
+            "name": "Farmer and pond inputs",
+            "purpose": "Capture each pond's size, depth, species, stocking and equipment so risk reflects that pond.",
+            "inputs": [
+              "pond registration form",
+              "farmer edits"
+            ],
+            "outputs": [
+              "pond profile"
+            ],
+            "implementation_status": "implemented_demo",
+            "status_detail": "Pond create/list/get/update with validation, stored in local SQLite.",
+            "limitations": [
+              "Biomass is the farmer's estimate; no automated stock tracking.",
+              "No authentication or multi-user access control in the MVP."
+            ],
+            "code_reference": "backend/app/services/ponds.py",
+            "api_endpoints": [
+              "GET /api/v1/ponds",
+              "POST /api/v1/ponds",
+              "GET /api/v1/ponds/{pond_id}",
+              "PATCH /api/v1/ponds/{pond_id}"
+            ]
+          },
+          {
+            "id": "weather_inputs",
+            "order": 2,
+            "name": "Weather features",
+            "purpose": "Summarise sunshine, cloud, wind, rain and temperature that drive overnight oxygen balance.",
+            "inputs": [
+              "scenario preset",
+              "manual overrides",
+              "Open-Meteo forecast (optional)"
+            ],
+            "outputs": [
+              "evening-to-morning weather summary with per-field source"
+            ],
+            "implementation_status": "implemented_demo",
+            "status_detail": "Offline synthetic scenario presets in use; Open-Meteo adapter exists but WEATHER_PROVIDER=demo.",
+            "limitations": [
+              "Presets are synthetic, not observations.",
+              "Open-Meteo lookup uses approximate district centroids, not pond coordinates."
+            ],
+            "code_reference": "backend/app/services/weather.py",
+            "api_endpoints": [
+              "GET /api/v1/weather/scenarios"
+            ]
+          },
+          {
+            "id": "physics_baseline",
+            "order": 3,
+            "name": "Physics-inspired baseline",
+            "purpose": "Simulate the overnight oxygen reserve hour by hour from demand (respiration) and supply (re-aeration, aerators).",
+            "inputs": [
+              "pond profile",
+              "weather summary",
+              "optional evening water readings",
+              "pond calibration"
+            ],
+            "outputs": [
+              "hourly relative risk index (0-100)",
+              "factor sensitivities"
+            ],
+            "implementation_status": "implemented_demo",
+            "status_detail": "Deterministic engine demo-0.1.0 with documented assumptions.",
+            "limitations": [
+              "Uncalibrated: constants are demonstration settings, not fitted to measured DO.",
+              "Outputs a relative index, never a dissolved-oxygen concentration or crash time."
+            ],
+            "code_reference": "backend/app/services/forecast_engine.py",
+            "api_endpoints": [
+              "POST /api/v1/ponds/{pond_id}/forecast"
+            ]
+          },
+          {
+            "id": "ml_correction",
+            "order": 4,
+            "name": "ML correction layer",
+            "purpose": "Learn systematic errors of the baseline from measured overnight DO and adjust the risk.",
+            "inputs": [
+              "baseline output",
+              "weather",
+              "measured DO series (needed)"
+            ],
+            "outputs": [
+              "corrected risk (future)"
+            ],
+            "implementation_status": "planned",
+            "status_detail": "No correction model is applied to forecasts. Offline experiment state: no_runs.",
+            "limitations": [
+              "No labelled overnight DO series with matching weather exists for the target ponds.",
+              "Offline experiments use other datasets/tasks or synthetic data and are not applied."
+            ],
+            "code_reference": "backend/ml/",
+            "api_endpoints": [
+              "GET /api/v1/ml/status"
+            ]
+          },
+          {
+            "id": "water_quality_rules",
+            "order": 5,
+            "name": "Water-quality and symptom rules",
+            "purpose": "Flag pH, temperature, ammonia, nitrite, DO and visible symptoms that need attention.",
+            "inputs": [
+              "test-kit readings",
+              "observed symptoms"
+            ],
+            "outputs": [
+              "safe/watch/danger with triggered rules, next steps and referral"
+            ],
+            "implementation_status": "implemented_demo",
+            "status_detail": "Threshold profile 'generic_warm_water_demo_v1' (demonstration settings, not validated).",
+            "limitations": [
+              "Generic warm-water thresholds; not species- or region-specific.",
+              "Never a disease diagnosis; refers medication questions to a fisheries officer."
+            ],
+            "code_reference": "backend/app/services/water_rules.py",
+            "api_endpoints": [
+              "POST /api/v1/ponds/{pond_id}/water-check"
+            ]
+          },
+          {
+            "id": "risk_classification",
+            "order": 6,
+            "name": "Safe / Watch / Danger classification",
+            "purpose": "Turn scores and rule results into one actionable level.",
+            "inputs": [
+              "risk index",
+              "rule results"
+            ],
+            "outputs": [
+              "status level"
+            ],
+            "implementation_status": "implemented_demo",
+            "status_detail": "Forecast: watch ≥ 40.0, danger ≥ 70.0 on the relative index (configurable).",
+            "limitations": [
+              "Boundaries are demonstration settings, not tuned against outcomes."
+            ],
+            "code_reference": "backend/app/services/forecast_engine.py",
+            "api_endpoints": []
+          },
+          {
+            "id": "alert_delivery",
+            "order": 7,
+            "name": "WhatsApp / SMS / voice alerts",
+            "purpose": "Send localized Kannada and English alerts and record delivery and acknowledgement.",
+            "inputs": [
+              "watch/danger forecast or water check",
+              "pond contact preferences"
+            ],
+            "outputs": [
+              "alert",
+              "simulated delivery attempts",
+              "acknowledgement"
+            ],
+            "implementation_status": "mock",
+            "status_detail": "Provider 'mock-offline' — offline mock; never contacts phone numbers.",
+            "limitations": [
+              "Kannada templates are unreviewed drafts.",
+              "Real providers need onboarding, approved templates, consent, pricing and DLT/TRAI compliance before use."
+            ],
+            "code_reference": "backend/app/services/alerts.py",
+            "api_endpoints": [
+              "GET /api/v1/alerts",
+              "POST /api/v1/alerts/{alert_id}/simulate-send",
+              "POST /api/v1/alerts/{alert_id}/acknowledge"
+            ]
+          },
+          {
+            "id": "feedback_calibration",
+            "order": 8,
+            "name": "Farmer feedback and per-pond calibration",
+            "purpose": "Use what farmers observed at dawn to nudge each pond's demand multiplier.",
+            "inputs": [
+              "forecast id",
+              "farmer observation"
+            ],
+            "outputs": [
+              "calibration event with before/after values"
+            ],
+            "implementation_status": "implemented_demo",
+            "status_detail": "Bounded step adjustment of a per-pond demand multiplier (0.8-1.25). Stress observed after a safe/watch forecast nudges it up (+0.05/+0.03); no stress after a watch/danger forecast nudges it down (-0.01/-0.02). Nights with aerators running, or not checked, cause no change.",
+            "limitations": [
+              "Farmer observations are qualitative and do not measure dissolved oxygen. This demo adjustment is not statistical calibration, is not validated, and never retrains any model automatically."
+            ],
+            "code_reference": "backend/app/services/calibration.py",
+            "api_endpoints": [
+              "POST /api/v1/ponds/{pond_id}/feedback",
+              "GET /api/v1/ponds/{pond_id}/calibration"
+            ]
+          },
+          {
+            "id": "cooperative_monitoring",
+            "order": 9,
+            "name": "Cooperative monitoring and outbreak reporting",
+            "purpose": "Aggregate farmer reports by village cluster to spot repeated symptoms early.",
+            "inputs": [
+              "farmer reports"
+            ],
+            "outputs": [
+              "cluster summaries with a follow-up signal"
+            ],
+            "implementation_status": "implemented_demo",
+            "status_detail": "Within the window: 3+ distinct ponds reporting the same symptom, or 2+ with the same symptom plus any reported mortality → investigate; 2+ distinct ponds with the same symptom, or any mortality → watch. Demo setting.",
+            "limitations": [
+              "Signal rule is a demonstration setting, not an epidemiological threshold.",
+              "A signal prompts follow-up; it does not confirm an outbreak."
+            ],
+            "code_reference": "backend/app/services/reports.py",
+            "api_endpoints": [
+              "GET /api/v1/reports",
+              "POST /api/v1/reports",
+              "GET /api/v1/cooperative/summary"
+            ]
+          }
+        ],
+        "status_legend": {
+          "implemented_demo": "Working software running on synthetic or user-entered demo data; not validated.",
+          "mock": "Simulated stand-in for an external service; nothing real is contacted.",
+          "experimental": "Offline experiment; results are not used in the live product flow.",
+          "planned": "Designed but not implemented.",
+          "not_started": "Not designed or implemented yet."
+        }
+      },
+      "meta": {
+        "generated_at": "2026-10-01T05:00:00Z",
+        "demo_mode": true,
+        "api_version": "v1"
+      }
+    }
+  }
+}

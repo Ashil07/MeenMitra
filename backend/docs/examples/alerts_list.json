@@ -1,0 +1,78 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/alerts?limit=2",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "data": [
+        {
+          "id": "alert_5589b52e1504",
+          "pond_id": "pond_demo_002",
+          "pond_name": "Demo Pond A2 (tilapia)",
+          "source_type": "water_check",
+          "source_id": "wc_7746ee6b6223",
+          "severity": "danger",
+          "title": {
+            "en": "Water check: danger (demo)",
+            "kn": "ನೀರಿನ ಪರಿಶೀಲನೆ: ಅಪಾಯ (ಡೆಮೊ)"
+          },
+          "message": {
+            "en": "MeenMitra DEMO alert: the water check for Demo Pond A2 (tilapia) flagged DANGER (dissolved oxygen, ammonia, fish symptoms). Follow the suggested steps and contact your fisheries officer before using any medicine or chemical. This is not a diagnosis.",
+            "kn": "ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಎಚ್ಚರಿಕೆ: Demo Pond A2 (tilapia) ಕೊಳದ ನೀರಿನ ಪರಿಶೀಲನೆಯಲ್ಲಿ ಅಪಾಯದ ಸೂಚನೆ ಕಂಡುಬಂದಿದೆ (ಕರಗಿದ ಆಮ್ಲಜನಕ, ಅಮೋನಿಯಾ, ಮೀನಿನ ಲಕ್ಷಣಗಳು). ಸೂಚಿಸಿದ ಕ್ರಮಗಳನ್ನು ಅನುಸರಿಸಿ. ಯಾವುದೇ ಔಷಧಿ ಅಥವಾ ರಾಸಾಯನಿಕ ಬಳಸುವ ಮೊದಲು ಮೀನುಗಾರಿಕೆ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ. ಇದು ರೋಗನಿರ್ಣಯವಲ್ಲ."
+          },
+          "voice_script": {
+            "en": "This is a MeenMitra demo call. MeenMitra DEMO alert: the water check for Demo Pond A2 (tilapia) flagged DANGER (dissolved oxygen, ammonia, fish symptoms). Follow the suggested steps and contact your fisheries officer before using any medicine or chemical. This is not a diagnosis.",
+            "kn": "ಇದು ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಕರೆ. ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಎಚ್ಚರಿಕೆ: Demo Pond A2 (tilapia) ಕೊಳದ ನೀರಿನ ಪರಿಶೀಲನೆಯಲ್ಲಿ ಅಪಾಯದ ಸೂಚನೆ ಕಂಡುಬಂದಿದೆ (ಕರಗಿದ ಆಮ್ಲಜನಕ, ಅಮೋನಿಯಾ, ಮೀನಿನ ಲಕ್ಷಣಗಳು). ಸೂಚಿಸಿದ ಕ್ರಮಗಳನ್ನು ಅನುಸರಿಸಿ. ಯಾವುದೇ ಔಷಧಿ ಅಥವಾ ರಾಸಾಯನಿಕ ಬಳಸುವ ಮೊದಲು ಮೀನುಗಾರಿಕೆ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ. ಇದು ರೋಗನಿರ್ಣಯವಲ್ಲ."
+          },
+          "status": "pending",
+          "created_at": "2026-10-01T05:00:00Z",
+          "updated_at": "2026-10-01T05:00:00Z",
+          "deliveries": [],
+          "acknowledgement": null,
+          "template_review_status": "unreviewed_draft",
+          "is_demo_record": true
+        },
+        {
+          "id": "alert_6bc211c13182",
+          "pond_id": "pond_demo_002",
+          "pond_name": "Demo Pond A2 (tilapia)",
+          "source_type": "forecast",
+          "source_id": "fc_09ac65d838b4",
+          "severity": "danger",
+          "title": {
+            "en": "High overnight oxygen risk (demo)",
+            "kn": "ರಾತ್ರಿ ಆಮ್ಲಜನಕ ಕೊರತೆಯ ಹೆಚ್ಚಿನ ಅಪಾಯ (ಡೆಮೊ)"
+          },
+          "message": {
+            "en": "MeenMitra DEMO alert: the simulated overnight oxygen-risk index for Demo Pond A2 (tilapia) is HIGH (highest around 05:00). If available, run aerators tonight and reduce evening feed. Check fish at dawn. If fish gasp at the surface or die, contact your fisheries officer. This is a demo estimate, not a measurement.",
+            "kn": "ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಎಚ್ಚರಿಕೆ: Demo Pond A2 (tilapia) ಕೊಳದಲ್ಲಿ ಇಂದು ರಾತ್ರಿ ಆಮ್ಲಜನಕ ಕೊರತೆಯ ಅಂದಾಜು ಅಪಾಯ ಹೆಚ್ಚಾಗಿದೆ (ಸುಮಾರು 05:00 ಸಮಯಕ್ಕೆ ಗರಿಷ್ಠ). ಸಾಧ್ಯವಾದರೆ ಇಂದು ರಾತ್ರಿ ಏರೇಟರ್ ಚಾಲನೆ ಮಾಡಿ ಮತ್ತು ಸಂಜೆಯ ಆಹಾರ ಕಡಿಮೆ ಮಾಡಿ. ಬೆಳಗಿನ ಜಾವ ಮೀನುಗಳನ್ನು ಪರಿಶೀಲಿಸಿ. ಮೀನುಗಳು ನೀರಿನ ಮೇಲ್ಮೈಯಲ್ಲಿ ಉಸಿರಾಡಲು ಒದ್ದಾಡುತ್ತಿದ್ದರೆ ಅಥವಾ ಸಾಯುತ್ತಿದ್ದರೆ ಮೀನುಗಾರಿಕೆ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ. ಇದು ಡೆಮೊ ಅಂದಾಜು, ನಿಜವಾದ ಅಳತೆ ಅಲ್ಲ."
+          },
+          "voice_script": {
+            "en": "This is a MeenMitra demo call. MeenMitra DEMO alert: the simulated overnight oxygen-risk index for Demo Pond A2 (tilapia) is HIGH (highest around 05:00). If available, run aerators tonight and reduce evening feed. Check fish at dawn. If fish gasp at the surface or die, contact your fisheries officer. This is a demo estimate, not a measurement.",
+            "kn": "ಇದು ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಕರೆ. ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಎಚ್ಚರಿಕೆ: Demo Pond A2 (tilapia) ಕೊಳದಲ್ಲಿ ಇಂದು ರಾತ್ರಿ ಆಮ್ಲಜನಕ ಕೊರತೆಯ ಅಂದಾಜು ಅಪಾಯ ಹೆಚ್ಚಾಗಿದೆ (ಸುಮಾರು 05:00 ಸಮಯಕ್ಕೆ ಗರಿಷ್ಠ). ಸಾಧ್ಯವಾದರೆ ಇಂದು ರಾತ್ರಿ ಏರೇಟರ್ ಚಾಲನೆ ಮಾಡಿ ಮತ್ತು ಸಂಜೆಯ ಆಹಾರ ಕಡಿಮೆ ಮಾಡಿ. ಬೆಳಗಿನ ಜಾವ ಮೀನುಗಳನ್ನು ಪರಿಶೀಲಿಸಿ. ಮೀನುಗಳು ನೀರಿನ ಮೇಲ್ಮೈಯಲ್ಲಿ ಉಸಿರಾಡಲು ಒದ್ದಾಡುತ್ತಿದ್ದರೆ ಅಥವಾ ಸಾಯುತ್ತಿದ್ದರೆ ಮೀನುಗಾರಿಕೆ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ. ಇದು ಡೆಮೊ ಅಂದಾಜು, ನಿಜವಾದ ಅಳತೆ ಅಲ್ಲ."
+          },
+          "status": "pending",
+          "created_at": "2026-10-01T05:00:00Z",
+          "updated_at": "2026-10-01T05:00:00Z",
+          "deliveries": [],
+          "acknowledgement": null,
+          "template_review_status": "unreviewed_draft",
+          "is_demo_record": true
+        }
+      ],
+      "meta": {
+        "generated_at": "2026-10-01T05:00:00Z",
+        "demo_mode": true,
+        "api_version": "v1",
+        "pagination": {
+          "total": 7,
+          "limit": 2,
+          "offset": 0
+        }
+      }
+    }
+  }
+}

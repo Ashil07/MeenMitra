@@ -1,0 +1,115 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/cooperative/summary",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "data": {
+        "window_days": 7,
+        "window_start": "2026-09-24T05:00:00Z",
+        "clusters": [
+          {
+            "cluster_id": "dakshina-kannada-demo-cluster-mulki",
+            "village_cluster": "Demo Cluster Mulki",
+            "district": "Dakshina Kannada",
+            "pond_count": 3,
+            "ponds_by_status": {
+              "safe": 2,
+              "watch": 1,
+              "danger": 0,
+              "unknown": 0
+            },
+            "reports_in_window": 3,
+            "ponds_reporting": 3,
+            "symptom_counts": {
+              "red_patches_or_lesions": 3,
+              "reduced_feeding": 1
+            },
+            "mortality_reported": 0,
+            "signal": {
+              "level": "investigate",
+              "explanation": "3 ponds reported 'red_patches_or_lesions' in the window.",
+              "rule": "Within the window: 3+ distinct ponds reporting the same symptom, or 2+ with the same symptom plus any reported mortality → investigate; 2+ distinct ponds with the same symptom, or any mortality → watch. Demo setting."
+            }
+          },
+          {
+            "cluster_id": "udupi-demo-cluster-brahmavar",
+            "village_cluster": "Demo Cluster Brahmavar",
+            "district": "Udupi",
+            "pond_count": 2,
+            "ponds_by_status": {
+              "safe": 0,
+              "watch": 1,
+              "danger": 1,
+              "unknown": 0
+            },
+            "reports_in_window": 2,
+            "ponds_reporting": 2,
+            "symptom_counts": {
+              "gasping_at_surface": 1,
+              "reduced_feeding": 2
+            },
+            "mortality_reported": 0,
+            "signal": {
+              "level": "watch",
+              "explanation": "2 ponds reported 'reduced_feeding' in the window.",
+              "rule": "Within the window: 3+ distinct ponds reporting the same symptom, or 2+ with the same symptom plus any reported mortality → investigate; 2+ distinct ponds with the same symptom, or any mortality → watch. Demo setting."
+            }
+          },
+          {
+            "cluster_id": "udupi-example-cluster",
+            "village_cluster": "Example Cluster",
+            "district": "Udupi",
+            "pond_count": 1,
+            "ponds_by_status": {
+              "safe": 0,
+              "watch": 0,
+              "danger": 0,
+              "unknown": 1
+            },
+            "reports_in_window": 0,
+            "ponds_reporting": 0,
+            "symptom_counts": {},
+            "mortality_reported": 0,
+            "signal": {
+              "level": "none",
+              "explanation": "No repeated symptom across ponds in the window.",
+              "rule": "Within the window: 3+ distinct ponds reporting the same symptom, or 2+ with the same symptom plus any reported mortality → investigate; 2+ distinct ponds with the same symptom, or any mortality → watch. Demo setting."
+            }
+          },
+          {
+            "cluster_id": "uttara-kannada-demo-cluster-kumta",
+            "village_cluster": "Demo Cluster Kumta",
+            "district": "Uttara Kannada",
+            "pond_count": 1,
+            "ponds_by_status": {
+              "safe": 1,
+              "watch": 0,
+              "danger": 0,
+              "unknown": 0
+            },
+            "reports_in_window": 1,
+            "ponds_reporting": 1,
+            "symptom_counts": {},
+            "mortality_reported": 0,
+            "signal": {
+              "level": "none",
+              "explanation": "No repeated symptom across ponds in the window.",
+              "rule": "Within the window: 3+ distinct ponds reporting the same symptom, or 2+ with the same symptom plus any reported mortality → investigate; 2+ distinct ponds with the same symptom, or any mortality → watch. Demo setting."
+            }
+          }
+        ],
+        "privacy_note": "Aggregated by village cluster. Farmer names, phone numbers and pond names are never included in cooperative summaries.",
+        "method_note": "Counts use farmer reports and seeded synthetic records only. A signal is a prompt for a fisheries officer to follow up, not a confirmed outbreak."
+      },
+      "meta": {
+        "generated_at": "2026-10-01T05:00:00Z",
+        "demo_mode": true,
+        "api_version": "v1"
+      }
+    }
+  }
+}

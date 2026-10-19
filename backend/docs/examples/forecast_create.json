@@ -1,0 +1,388 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/ponds/pond_demo_002/forecast",
+    "body": {
+      "forecast_date": "2026-10-01",
+      "scenario": "overcast_still_night",
+      "weather": {
+        "wind_speed_ms": 0.4
+      },
+      "aerator_planned": false,
+      "feeding_plan": "normal"
+    }
+  },
+  "response": {
+    "status": 201,
+    "body": {
+      "data": {
+        "id": "fc_09ac65d838b4",
+        "pond_id": "pond_demo_002",
+        "generated_at": "2026-10-01T05:00:00Z",
+        "forecast_date": "2026-10-01",
+        "window_start": "2026-10-01T18:00:00+05:30",
+        "window_end": "2026-10-02T06:00:00+05:30",
+        "timezone": "Asia/Kolkata (UTC+05:30)",
+        "hourly": [
+          {
+            "hour_index": 0,
+            "timestamp": "2026-10-01T18:00:00+05:30",
+            "local_time": "18:00",
+            "risk_index": 53.9,
+            "status": "watch",
+            "value_type": "synthetic_model_output"
+          },
+          {
+            "hour_index": 1,
+            "timestamp": "2026-10-01T19:00:00+05:30",
+            "local_time": "19:00",
+            "risk_index": 58.8,
+            "status": "watch",
+            "value_type": "synthetic_model_output"
+          },
+          {
+            "hour_index": 2,
+            "timestamp": "2026-10-01T20:00:00+05:30",
+            "local_time": "20:00",
+            "risk_index": 63.6,
+            "status": "watch",
+            "value_type": "synthetic_model_output"
+          },
+          {
+            "hour_index": 3,
+            "timestamp": "2026-10-01T21:00:00+05:30",
+            "local_time": "21:00",
+            "risk_index": 68.2,
+            "status": "watch",
+            "value_type": "synthetic_model_output"
+          },
+          {
+            "hour_index": 4,
+            "timestamp": "2026-10-01T22:00:00+05:30",
+            "local_time": "22:00",
+            "risk_index": 72.8,
+            "status": "danger",
+            "value_type": "synthetic_model_output"
+          },
+          {
+            "hour_index": 5,
+            "timestamp": "2026-10-01T23:00:00+05:30",
+            "local_time": "23:00",
+            "risk_index": 77.2,
+            "status": "danger",
+            "value_type": "synthetic_model_output"
+          },
+          {
+            "hour_index": 6,
+            "timestamp": "2026-10-02T00:00:00+05:30",
+            "local_time": "00:00",
+            "risk_index": 81.6,
+            "status": "danger",
+            "value_type": "synthetic_model_output"
+          },
+          {
+            "hour_index": 7,
+            "timestamp": "2026-10-02T01:00:00+05:30",
+            "local_time": "01:00",
+            "risk_index": 85.8,
+            "status": "danger",
+            "value_type": "synthetic_model_output"
+          },
+          {
+            "hour_index": 8,
+            "timestamp": "2026-10-02T02:00:00+05:30",
+            "local_time": "02:00",
+            "risk_index": 90.0,
+            "status": "danger",
+            "value_type": "synthetic_model_output"
+          },
+          {
+            "hour_index": 9,
+            "timestamp": "2026-10-02T03:00:00+05:30",
+            "local_time": "03:00",
+            "risk_index": 94.0,
+            "status": "danger",
+            "value_type": "synthetic_model_output"
+          },
+          {
+            "hour_index": 10,
+            "timestamp": "2026-10-02T04:00:00+05:30",
+            "local_time": "04:00",
+            "risk_index": 98.0,
+            "status": "danger",
+            "value_type": "synthetic_model_output"
+          },
+          {
+            "hour_index": 11,
+            "timestamp": "2026-10-02T05:00:00+05:30",
+            "local_time": "05:00",
+            "risk_index": 100.0,
+            "status": "danger",
+            "value_type": "synthetic_model_output"
+          },
+          {
+            "hour_index": 12,
+            "timestamp": "2026-10-02T06:00:00+05:30",
+            "local_time": "06:00",
+            "risk_index": 100.0,
+            "status": "danger",
+            "value_type": "synthetic_model_output"
+          }
+        ],
+        "summary": {
+          "peak_risk_index": 100.0,
+          "mean_risk_index": 80.3,
+          "peak_risk_time": "2026-10-02T05:00:00+05:30",
+          "overall_status": "danger",
+          "hours_watch": 4,
+          "hours_danger": 9,
+          "headline": "High simulated overnight oxygen risk (index 100.0, highest around 05:00). Prepare to act tonight."
+        },
+        "factors": [
+          {
+            "key": "sunshine",
+            "label": "Sunshine hours today",
+            "input_value": 2.0,
+            "unit": "h",
+            "reference_value": 8.0,
+            "effect": "increases_risk",
+            "contribution_points": 19.8,
+            "value_source": "scenario_preset",
+            "explanation": "Few sunshine hours mean less oxygen produced by algae before evening."
+          },
+          {
+            "key": "wind",
+            "label": "Overnight wind speed",
+            "input_value": 0.4,
+            "unit": "m/s",
+            "reference_value": 2.0,
+            "effect": "increases_risk",
+            "contribution_points": 15.1,
+            "value_source": "user_override",
+            "explanation": "Still air means little surface mixing and re-aeration overnight."
+          },
+          {
+            "key": "stocking_density",
+            "label": "Stocking density",
+            "input_value": 0.705,
+            "unit": "kg/m³",
+            "reference_value": 0.5,
+            "effect": "increases_risk",
+            "contribution_points": 4.6,
+            "value_source": "pond_profile",
+            "explanation": "More fish per cubic metre consume oxygen faster."
+          },
+          {
+            "key": "cloud_cover",
+            "label": "Daytime cloud cover",
+            "input_value": 90.0,
+            "unit": "%",
+            "reference_value": 30.0,
+            "effect": "increases_risk",
+            "contribution_points": 3.3,
+            "value_source": "scenario_preset",
+            "explanation": "Cloudy days reduce photosynthesis, leaving less oxygen banked for the night."
+          },
+          {
+            "key": "water_temperature",
+            "label": "Water temperature",
+            "input_value": 29.0,
+            "unit": "°C",
+            "reference_value": 28.0,
+            "effect": "increases_risk",
+            "contribution_points": 1.6,
+            "value_source": "default_assumption",
+            "explanation": "Warmer water speeds up respiration by fish, plankton and sediment."
+          },
+          {
+            "key": "depth",
+            "label": "Pond depth",
+            "input_value": 1.3,
+            "unit": "m",
+            "reference_value": 1.5,
+            "effect": "neutral",
+            "contribution_points": 0.2,
+            "value_source": "pond_profile",
+            "explanation": "Close to the reference value; little effect on this forecast."
+          },
+          {
+            "key": "rainfall",
+            "label": "Rainfall in window",
+            "input_value": 2.0,
+            "unit": "mm",
+            "reference_value": 0.0,
+            "effect": "neutral",
+            "contribution_points": 0.0,
+            "value_source": "scenario_preset",
+            "explanation": "Close to the reference value; little effect on this forecast."
+          },
+          {
+            "key": "aeration",
+            "label": "Aerators running overnight",
+            "input_value": false,
+            "unit": null,
+            "reference_value": false,
+            "effect": "neutral",
+            "contribution_points": 0.0,
+            "value_source": "user_override",
+            "explanation": "Close to the reference value; little effect on this forecast."
+          },
+          {
+            "key": "feeding_plan",
+            "label": "Evening feeding plan",
+            "input_value": "normal",
+            "unit": null,
+            "reference_value": "normal",
+            "effect": "neutral",
+            "contribution_points": 0.0,
+            "value_source": "user_override",
+            "explanation": "Close to the reference value; little effect on this forecast."
+          },
+          {
+            "key": "observed_do",
+            "label": "Evening DO reading (observed)",
+            "input_value": null,
+            "unit": "mg/L",
+            "reference_value": null,
+            "effect": "neutral",
+            "contribution_points": 0.0,
+            "value_source": "default_assumption",
+            "explanation": "No evening DO reading provided; the starting reserve was estimated from weather."
+          },
+          {
+            "key": "calibration",
+            "label": "Pond calibration multiplier",
+            "input_value": 1.0,
+            "unit": "x",
+            "reference_value": 1.0,
+            "effect": "neutral",
+            "contribution_points": 0.0,
+            "value_source": "pond_profile",
+            "explanation": "Close to the reference value; little effect on this forecast."
+          }
+        ],
+        "actions": [
+          {
+            "id": "arrange_aeration",
+            "priority": "high",
+            "text": "Arrange temporary aeration (e.g. a pump or paddle) if one is available.",
+            "limitation": "Demo suggestion based on a simulated relative risk index; it is not guaranteed to prevent stress or mortality."
+          },
+          {
+            "id": "skip_evening_feed",
+            "priority": "high",
+            "text": "Skip or sharply reduce the evening feed.",
+            "limitation": "Demo suggestion based on a simulated relative risk index; it is not guaranteed to prevent stress or mortality."
+          },
+          {
+            "id": "prepare_water_exchange",
+            "priority": "medium",
+            "text": "If a clean, oxygen-rich water source is available, be ready to add water.",
+            "limitation": "Demo suggestion based on a simulated relative risk index; it is not guaranteed to prevent stress or mortality."
+          },
+          {
+            "id": "contact_officer",
+            "priority": "medium",
+            "text": "If fish gasp at the surface or die, contact your local fisheries officer.",
+            "limitation": "Demo suggestion based on a simulated relative risk index; it is not guaranteed to prevent stress or mortality."
+          },
+          {
+            "id": "dawn_check",
+            "priority": "medium",
+            "text": "Check fish between 5 and 6 AM for gasping at the surface, and report what you see.",
+            "limitation": "Demo suggestion based on a simulated relative risk index; it is not guaranteed to prevent stress or mortality."
+          }
+        ],
+        "missing_data": [
+          "Water temperature not measured; estimated as evening air temperature + 1 °C.",
+          "No evening dissolved-oxygen reading; starting reserve estimated from sunshine and cloud."
+        ],
+        "resolved_inputs": {
+          "scenario": "overcast_still_night",
+          "weather": {
+            "air_temp_evening_c": 28.0,
+            "air_temp_min_c": 26.0,
+            "cloud_cover_pct": 90.0,
+            "sunshine_hours_today": 2.0,
+            "wind_speed_ms": 0.4,
+            "rainfall_mm": 2.0
+          },
+          "weather_value_sources": {
+            "air_temp_evening_c": "scenario_preset",
+            "air_temp_min_c": "scenario_preset",
+            "cloud_cover_pct": "scenario_preset",
+            "sunshine_hours_today": "scenario_preset",
+            "wind_speed_ms": "user_override",
+            "rainfall_mm": "scenario_preset"
+          },
+          "pond": {
+            "area_m2": 1200.0,
+            "depth_m": 1.3,
+            "species": "tilapia",
+            "estimated_biomass_kg": 1100.0,
+            "aerator_count": 0
+          },
+          "aerator_planned": false,
+          "feeding_plan": "normal",
+          "water_temp_c": {
+            "value": 29.0,
+            "source": "default_assumption"
+          },
+          "observed_do_mg_l": null,
+          "stocking_density_kg_m3": {
+            "value": 0.705,
+            "source": "pond_profile"
+          },
+          "demand_multiplier": 1.0,
+          "window": {
+            "forecast_date": "2026-10-01",
+            "start_hour": 18,
+            "end_hour": 6
+          }
+        },
+        "calibration_applied": {
+          "demand_multiplier": 1.0
+        },
+        "provenance": {
+          "simulation": true,
+          "output_type": "relative_risk_index",
+          "model_mode": "demo_physics_inspired",
+          "implementation_status": "demo",
+          "engine_version": "demo-0.1.0",
+          "calibrated_to_measured_do": false,
+          "ml_correction": {
+            "applied": false,
+            "reason": "No ML correction model has been trained on features compatible with this forecast (pond profile + weather → overnight oxygen). See GET /api/v1/ml/status."
+          },
+          "weather_source": "scenario_with_overrides",
+          "weather_fallback_reason": null,
+          "inputs_hash": "23ec52f065796940730ffafbb385a9adf0258b672517bd21fd32179a17d88459",
+          "assumptions": [
+            "Output is a relative demo risk index (0-100), not a dissolved-oxygen concentration.",
+            "Model constants are demonstration settings chosen for plausible qualitative behaviour; they have not been fitted to measured pond dissolved-oxygen data.",
+            "Respiration demand rises ~2x per 10 °C of water temperature (Q10 ≈ 2).",
+            "Demand scales with stocking density relative to 0.5 kg/m³ (≈5 t/ha at 1 m depth).",
+            "Sunny, clear days are assumed to leave a larger evening oxygen reserve from photosynthesis.",
+            "Wind re-aeration grows with wind speed and is stronger in shallower ponds.",
+            "Heavy rain (>20 mm) adds demand to represent runoff and possible stratification turnover.",
+            "Aerators, when planned, are assumed to run for the whole window.",
+            "Water temperature, when not measured, is estimated from air temperature.",
+            "Factor contributions are one-at-a-time sensitivities; they do not add up exactly."
+          ],
+          "classification_thresholds": {
+            "watch_at_or_above": 40.0,
+            "danger_at_or_above": 70.0
+          }
+        },
+        "alert_id": "alert_6bc211c13182",
+        "is_demo_record": false,
+        "disclaimer": "Demo simulation. The risk index is a relative, uncalibrated score from a physics-inspired model with synthetic or user-entered inputs. It is not a measured or predicted dissolved-oxygen value, does not predict when oxygen will crash, and following the suggestions does not guarantee that fish stress or mortality will be prevented."
+      },
+      "meta": {
+        "generated_at": "2026-10-01T05:00:00Z",
+        "demo_mode": true,
+        "api_version": "v1"
+      }
+    }
+  }
+}

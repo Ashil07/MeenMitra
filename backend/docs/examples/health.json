@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/health",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "status": "ok",
+      "app_env": "local",
+      "database": "ok",
+      "alert_provider": "mock-offline (mock)",
+      "weather_provider": "demo",
+      "external_credentials_required": false
+    }
+  }
+}

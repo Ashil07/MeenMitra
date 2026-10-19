@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/ponds/pond_missing",
+    "body": null
+  },
+  "response": {
+    "status": 404,
+    "body": {
+      "error": {
+        "code": "not_found",
+        "message": "Pond 'pond_missing' not found",
+        "details": {
+          "pond_id": "pond_missing"
+        }
+      }
+    }
+  }
+}

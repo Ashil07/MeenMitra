@@ -1,0 +1,5309 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MeenMitra API",
+    "description": "\nMeenMitra MVP backend — **demo mode**.\n\n* Forecasts are a *relative demo oxygen-risk index* from an uncalibrated physics-inspired model, not\n  dissolved-oxygen measurements or predictions of when oxygen will crash.\n* Water-quality thresholds are unvalidated demonstration settings; the rules engine never diagnoses disease.\n* Alerts are delivered only through an offline mock provider; no real message or call is ever sent.\n* Seeded ponds, readings, reports and alerts are synthetic.\n\nSuccessful responses use `{\"data\": ..., \"meta\": {...}}`; errors use `{\"error\": {\"code\", \"message\", \"details\"}}`.\n",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Liveness and configuration check",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard/summary": {
+      "get": {
+        "tags": [
+          "dashboard"
+        ],
+        "summary": "Dashboard",
+        "operationId": "dashboard_api_v1_dashboard_summary_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_DashboardSummary_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ml/status": {
+      "get": {
+        "tags": [
+          "ml"
+        ],
+        "summary": "Real dataset availability and experiment results read from disk",
+        "operationId": "ml_status_api_v1_ml_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_MlStatus_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/approach": {
+      "get": {
+        "tags": [
+          "approach"
+        ],
+        "summary": "Pipeline stages with their actual implementation status",
+        "operationId": "approach_api_v1_approach_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_Approach_"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/forecasts/{forecast_id}": {
+      "get": {
+        "tags": [
+          "forecasts"
+        ],
+        "summary": "Get Forecast",
+        "operationId": "get_forecast_api_v1_forecasts__forecast_id__get",
+        "parameters": [
+          {
+            "name": "forecast_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Forecast Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_Forecast_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/weather/scenarios": {
+      "get": {
+        "tags": [
+          "forecasts"
+        ],
+        "summary": "Synthetic weather scenario presets for the forecast explorer",
+        "operationId": "weather_scenarios_api_v1_weather_scenarios_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_list_ScenarioPreset__"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reports": {
+      "get": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "List Reports",
+        "operationId": "list_reports_api_v1_reports_get",
+        "parameters": [
+          {
+            "name": "pond_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Pond Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Maximum items to return",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Maximum items to return"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Items to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Items to skip"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListEnvelope_FarmerReport_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "Create Report",
+        "operationId": "create_report_api_v1_reports_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FarmerReportCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_FarmerReport_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
+    "/api/v1/cooperative/summary": {
+      "get": {
+        "tags": [
+          "reports"
+        ],
+        "summary": "Cluster-level, anonymised report aggregation with a demo follow-up signal",
+        "operationId": "cooperative_api_v1_cooperative_summary_get",
+        "parameters": [
+          {
+            "name": "window_days",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 60,
+              "minimum": 1,
+              "default": 7,
+              "title": "Window Days"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_CooperativeSummary_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/demo/reset": {
+      "post": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Wipe and re-seed the local demo database (requires ALLOW_DEMO_RESET=true)",
+        "operationId": "demo_reset_api_v1_demo_reset_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Demo Reset Api V1 Demo Reset Post"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ponds": {
+      "get": {
+        "tags": [
+          "ponds"
+        ],
+        "summary": "List ponds",
+        "operationId": "list_ponds_api_v1_ponds_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Maximum items to return",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Maximum items to return"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Items to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Items to skip"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListEnvelope_Pond_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ponds"
+        ],
+        "summary": "Register a pond",
+        "operationId": "create_pond_api_v1_ponds_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PondCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_Pond_"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
+    "/api/v1/ponds/{pond_id}": {
+      "get": {
+        "tags": [
+          "ponds"
+        ],
+        "summary": "Get a pond",
+        "operationId": "get_pond_api_v1_ponds__pond_id__get",
+        "parameters": [
+          {
+            "name": "pond_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pond Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_Pond_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "ponds"
+        ],
+        "summary": "Update a pond",
+        "operationId": "update_pond_api_v1_ponds__pond_id__patch",
+        "parameters": [
+          {
+            "name": "pond_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pond Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PondUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_Pond_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
+    "/api/v1/ponds/{pond_id}/forecast": {
+      "post": {
+        "tags": [
+          "ponds"
+        ],
+        "summary": "Run the demo overnight oxygen-risk forecast",
+        "operationId": "run_forecast_api_v1_ponds__pond_id__forecast_post",
+        "parameters": [
+          {
+            "name": "pond_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pond Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ForecastRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_Forecast_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
+    "/api/v1/ponds/{pond_id}/forecasts": {
+      "get": {
+        "tags": [
+          "ponds"
+        ],
+        "summary": "List stored forecasts for a pond (newest first)",
+        "operationId": "list_forecasts_api_v1_ponds__pond_id__forecasts_get",
+        "parameters": [
+          {
+            "name": "pond_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pond Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Maximum items to return",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Maximum items to return"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Items to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Items to skip"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListEnvelope_Forecast_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
+    "/api/v1/ponds/{pond_id}/water-check": {
+      "post": {
+        "tags": [
+          "ponds"
+        ],
+        "summary": "Evaluate water-quality readings and symptoms",
+        "operationId": "water_check_api_v1_ponds__pond_id__water_check_post",
+        "parameters": [
+          {
+            "name": "pond_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pond Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WaterCheckRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_WaterCheck_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
+    "/api/v1/ponds/{pond_id}/water-checks": {
+      "get": {
+        "tags": [
+          "ponds"
+        ],
+        "summary": "List stored water checks for a pond (newest first)",
+        "operationId": "list_water_checks_api_v1_ponds__pond_id__water_checks_get",
+        "parameters": [
+          {
+            "name": "pond_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pond Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Maximum items to return",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Maximum items to return"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Items to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Items to skip"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListEnvelope_WaterCheck_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
+    "/api/v1/ponds/{pond_id}/feedback": {
+      "post": {
+        "tags": [
+          "ponds"
+        ],
+        "summary": "Record a farmer's dawn observation for a forecast (updates pond calibration)",
+        "operationId": "feedback_api_v1_ponds__pond_id__feedback_post",
+        "parameters": [
+          {
+            "name": "pond_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pond Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FeedbackRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_FeedbackResult_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          }
+        }
+      }
+    },
+    "/api/v1/ponds/{pond_id}/calibration": {
+      "get": {
+        "tags": [
+          "ponds"
+        ],
+        "summary": "Current calibration state and audit trail for a pond",
+        "operationId": "calibration_api_v1_ponds__pond_id__calibration_get",
+        "parameters": [
+          {
+            "name": "pond_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pond Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_CalibrationHistory_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
+    "/api/v1/alerts": {
+      "get": {
+        "tags": [
+          "alerts"
+        ],
+        "summary": "List alerts (newest first)",
+        "operationId": "list_alerts_api_v1_alerts_get",
+        "parameters": [
+          {
+            "name": "pond_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Pond Id"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "pending",
+                    "sent",
+                    "failed",
+                    "acknowledged"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "watch",
+                    "danger"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Severity"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "description": "Maximum items to return",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "Maximum items to return"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Items to skip",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Items to skip"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListEnvelope_Alert_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/alerts/{alert_id}": {
+      "get": {
+        "tags": [
+          "alerts"
+        ],
+        "summary": "Get an alert",
+        "operationId": "get_alert_api_v1_alerts__alert_id__get",
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Alert Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_Alert_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
+    "/api/v1/alerts/{alert_id}/simulate-send": {
+      "post": {
+        "tags": [
+          "alerts"
+        ],
+        "summary": "Simulate WhatsApp/SMS/voice delivery through the offline mock provider",
+        "operationId": "simulate_send_api_v1_alerts__alert_id__simulate_send_post",
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Alert Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/SimulateSendRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_SimulateSendResult_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    },
+    "/api/v1/alerts/{alert_id}/acknowledge": {
+      "post": {
+        "tags": [
+          "alerts"
+        ],
+        "summary": "Record the farmer's acknowledgement",
+        "operationId": "acknowledge_api_v1_alerts__alert_id__acknowledge_post",
+        "parameters": [
+          {
+            "name": "alert_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Alert Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/AcknowledgeRequest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Payload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_Alert_"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AcknowledgeRequest": {
+        "properties": {
+          "response": {
+            "type": "string",
+            "enum": [
+              "seen",
+              "action_taken",
+              "need_help"
+            ],
+            "title": "Response",
+            "default": "seen"
+          },
+          "channel": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "whatsapp",
+                  "sms",
+                  "voice"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "AcknowledgeRequest"
+      },
+      "Acknowledgement": {
+        "properties": {
+          "acknowledged_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Acknowledged At"
+          },
+          "response": {
+            "type": "string",
+            "enum": [
+              "seen",
+              "action_taken",
+              "need_help"
+            ],
+            "title": "Response"
+          },
+          "channel": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "whatsapp",
+                  "sms",
+                  "voice"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "acknowledged_at",
+          "response",
+          "channel",
+          "note"
+        ],
+        "title": "Acknowledgement"
+      },
+      "ActionSuggestion": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "title": "Priority"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "limitation": {
+            "type": "string",
+            "title": "Limitation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "priority",
+          "text",
+          "limitation"
+        ],
+        "title": "ActionSuggestion"
+      },
+      "Alert": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "pond_id": {
+            "type": "string",
+            "title": "Pond Id"
+          },
+          "pond_name": {
+            "type": "string",
+            "title": "Pond Name"
+          },
+          "source_type": {
+            "type": "string",
+            "enum": [
+              "forecast",
+              "water_check"
+            ],
+            "title": "Source Type"
+          },
+          "source_id": {
+            "type": "string",
+            "title": "Source Id"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "watch",
+              "danger"
+            ],
+            "title": "Severity"
+          },
+          "title": {
+            "$ref": "#/components/schemas/LocalizedText"
+          },
+          "message": {
+            "$ref": "#/components/schemas/LocalizedText"
+          },
+          "voice_script": {
+            "$ref": "#/components/schemas/LocalizedText"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "sent",
+              "failed",
+              "acknowledged"
+            ],
+            "title": "Status"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "deliveries": {
+            "items": {
+              "$ref": "#/components/schemas/DeliveryAttempt"
+            },
+            "type": "array",
+            "title": "Deliveries"
+          },
+          "acknowledgement": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Acknowledgement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template_review_status": {
+            "type": "string",
+            "const": "unreviewed_draft",
+            "title": "Template Review Status",
+            "description": "Kannada wording has not been reviewed by a competent speaker; not production-ready",
+            "default": "unreviewed_draft"
+          },
+          "is_demo_record": {
+            "type": "boolean",
+            "title": "Is Demo Record",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "pond_id",
+          "pond_name",
+          "source_type",
+          "source_id",
+          "severity",
+          "title",
+          "message",
+          "voice_script",
+          "status",
+          "created_at",
+          "updated_at",
+          "deliveries",
+          "acknowledgement"
+        ],
+        "title": "Alert"
+      },
+      "Approach": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/ApproachStage"
+            },
+            "type": "array",
+            "title": "Stages"
+          },
+          "status_legend": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Status Legend"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "summary",
+          "stages",
+          "status_legend"
+        ],
+        "title": "Approach"
+      },
+      "ApproachStage": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "order": {
+            "type": "integer",
+            "title": "Order"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "purpose": {
+            "type": "string",
+            "title": "Purpose"
+          },
+          "inputs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Inputs"
+          },
+          "outputs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Outputs"
+          },
+          "implementation_status": {
+            "type": "string",
+            "enum": [
+              "implemented_demo",
+              "mock",
+              "experimental",
+              "planned",
+              "not_started"
+            ],
+            "title": "Implementation Status"
+          },
+          "status_detail": {
+            "type": "string",
+            "title": "Status Detail"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          },
+          "code_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code Reference"
+          },
+          "api_endpoints": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Api Endpoints"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "order",
+          "name",
+          "purpose",
+          "inputs",
+          "outputs",
+          "implementation_status",
+          "status_detail",
+          "limitations",
+          "code_reference",
+          "api_endpoints"
+        ],
+        "title": "ApproachStage"
+      },
+      "CalibrationEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "pond_id": {
+            "type": "string",
+            "title": "Pond Id"
+          },
+          "forecast_id": {
+            "type": "string",
+            "title": "Forecast Id"
+          },
+          "forecast_status": {
+            "type": "string",
+            "enum": [
+              "safe",
+              "watch",
+              "danger"
+            ],
+            "title": "Forecast Status"
+          },
+          "forecast_peak_risk_index": {
+            "type": "number",
+            "title": "Forecast Peak Risk Index"
+          },
+          "observation": {
+            "type": "string",
+            "enum": [
+              "no_stress_seen",
+              "fish_gasping_at_dawn",
+              "fish_mortality_overnight",
+              "not_checked"
+            ],
+            "title": "Observation"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observed At"
+          },
+          "aerator_used": {
+            "type": "boolean",
+            "title": "Aerator Used"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "previous_demand_multiplier": {
+            "type": "number",
+            "title": "Previous Demand Multiplier"
+          },
+          "updated_demand_multiplier": {
+            "type": "number",
+            "title": "Updated Demand Multiplier"
+          },
+          "delta": {
+            "type": "number",
+            "title": "Delta"
+          },
+          "rule_applied": {
+            "type": "string",
+            "title": "Rule Applied"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "pond_id",
+          "forecast_id",
+          "forecast_status",
+          "forecast_peak_risk_index",
+          "observation",
+          "observed_at",
+          "aerator_used",
+          "note",
+          "created_at",
+          "previous_demand_multiplier",
+          "updated_demand_multiplier",
+          "delta",
+          "rule_applied",
+          "explanation"
+        ],
+        "title": "CalibrationEvent"
+      },
+      "CalibrationHistory": {
+        "properties": {
+          "calibration": {
+            "$ref": "#/components/schemas/CalibrationState"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/CalibrationEvent"
+            },
+            "type": "array",
+            "title": "Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "calibration",
+          "events"
+        ],
+        "title": "CalibrationHistory"
+      },
+      "CalibrationState": {
+        "properties": {
+          "pond_id": {
+            "type": "string",
+            "title": "Pond Id"
+          },
+          "demand_multiplier": {
+            "type": "number",
+            "title": "Demand Multiplier"
+          },
+          "min_multiplier": {
+            "type": "number",
+            "title": "Min Multiplier"
+          },
+          "max_multiplier": {
+            "type": "number",
+            "title": "Max Multiplier"
+          },
+          "feedback_count": {
+            "type": "integer",
+            "title": "Feedback Count"
+          },
+          "updated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated At"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method"
+          },
+          "limitations": {
+            "type": "string",
+            "title": "Limitations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "pond_id",
+          "demand_multiplier",
+          "min_multiplier",
+          "max_multiplier",
+          "feedback_count",
+          "updated_at",
+          "method",
+          "limitations"
+        ],
+        "title": "CalibrationState"
+      },
+      "ClusterSignal": {
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "none",
+              "watch",
+              "investigate"
+            ],
+            "title": "Level"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          },
+          "rule": {
+            "type": "string",
+            "title": "Rule"
+          }
+        },
+        "type": "object",
+        "required": [
+          "level",
+          "explanation",
+          "rule"
+        ],
+        "title": "ClusterSignal"
+      },
+      "ClusterSummary": {
+        "properties": {
+          "cluster_id": {
+            "type": "string",
+            "title": "Cluster Id"
+          },
+          "village_cluster": {
+            "type": "string",
+            "title": "Village Cluster"
+          },
+          "district": {
+            "type": "string",
+            "title": "District"
+          },
+          "pond_count": {
+            "type": "integer",
+            "title": "Pond Count"
+          },
+          "ponds_by_status": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Ponds By Status"
+          },
+          "reports_in_window": {
+            "type": "integer",
+            "title": "Reports In Window"
+          },
+          "ponds_reporting": {
+            "type": "integer",
+            "title": "Ponds Reporting"
+          },
+          "symptom_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Symptom Counts"
+          },
+          "mortality_reported": {
+            "type": "integer",
+            "title": "Mortality Reported"
+          },
+          "signal": {
+            "$ref": "#/components/schemas/ClusterSignal"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cluster_id",
+          "village_cluster",
+          "district",
+          "pond_count",
+          "ponds_by_status",
+          "reports_in_window",
+          "ponds_reporting",
+          "symptom_counts",
+          "mortality_reported",
+          "signal"
+        ],
+        "title": "ClusterSummary"
+      },
+      "CooperativeSummary": {
+        "properties": {
+          "window_days": {
+            "type": "integer",
+            "title": "Window Days"
+          },
+          "window_start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Window Start"
+          },
+          "clusters": {
+            "items": {
+              "$ref": "#/components/schemas/ClusterSummary"
+            },
+            "type": "array",
+            "title": "Clusters"
+          },
+          "privacy_note": {
+            "type": "string",
+            "title": "Privacy Note"
+          },
+          "method_note": {
+            "type": "string",
+            "title": "Method Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "window_days",
+          "window_start",
+          "clusters",
+          "privacy_note",
+          "method_note"
+        ],
+        "title": "CooperativeSummary"
+      },
+      "DashboardAlert": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "pond_id": {
+            "type": "string",
+            "title": "Pond Id"
+          },
+          "pond_name": {
+            "type": "string",
+            "title": "Pond Name"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "watch",
+              "danger"
+            ],
+            "title": "Severity"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "title_en": {
+            "type": "string",
+            "title": "Title En"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "pond_id",
+          "pond_name",
+          "severity",
+          "status",
+          "title_en",
+          "created_at"
+        ],
+        "title": "DashboardAlert"
+      },
+      "DashboardPond": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "village_cluster": {
+            "type": "string",
+            "title": "Village Cluster"
+          },
+          "district": {
+            "type": "string",
+            "title": "District"
+          },
+          "species": {
+            "type": "string",
+            "title": "Species"
+          },
+          "overall_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "safe",
+                  "watch",
+                  "danger"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overall Status"
+          },
+          "forecast_peak_risk_index": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast Peak Risk Index"
+          },
+          "forecast_generated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast Generated At"
+          },
+          "water_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "safe",
+                  "watch",
+                  "danger"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Water Status"
+          },
+          "open_alert_count": {
+            "type": "integer",
+            "title": "Open Alert Count"
+          },
+          "is_demo_record": {
+            "type": "boolean",
+            "title": "Is Demo Record"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "village_cluster",
+          "district",
+          "species",
+          "overall_status",
+          "forecast_peak_risk_index",
+          "forecast_generated_at",
+          "water_status",
+          "open_alert_count",
+          "is_demo_record"
+        ],
+        "title": "DashboardPond"
+      },
+      "DashboardSummary": {
+        "properties": {
+          "totals": {
+            "$ref": "#/components/schemas/DashboardTotals"
+          },
+          "ponds": {
+            "items": {
+              "$ref": "#/components/schemas/DashboardPond"
+            },
+            "type": "array",
+            "title": "Ponds"
+          },
+          "recent_alerts": {
+            "items": {
+              "$ref": "#/components/schemas/DashboardAlert"
+            },
+            "type": "array",
+            "title": "Recent Alerts"
+          },
+          "cooperative_signals": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Cooperative Signals"
+          },
+          "ml": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Ml"
+          },
+          "data_notice": {
+            "type": "string",
+            "title": "Data Notice"
+          }
+        },
+        "type": "object",
+        "required": [
+          "totals",
+          "ponds",
+          "recent_alerts",
+          "cooperative_signals",
+          "ml",
+          "data_notice"
+        ],
+        "title": "DashboardSummary"
+      },
+      "DashboardTotals": {
+        "properties": {
+          "ponds": {
+            "type": "integer",
+            "title": "Ponds"
+          },
+          "ponds_by_status": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Ponds By Status",
+            "description": "Keys: safe, watch, danger, unknown (no forecast or water check yet)"
+          },
+          "open_alerts": {
+            "type": "integer",
+            "title": "Open Alerts"
+          },
+          "unacknowledged_alerts": {
+            "type": "integer",
+            "title": "Unacknowledged Alerts"
+          },
+          "simulated_deliveries": {
+            "type": "integer",
+            "title": "Simulated Deliveries"
+          },
+          "farmer_reports_last_7_days": {
+            "type": "integer",
+            "title": "Farmer Reports Last 7 Days"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ponds",
+          "ponds_by_status",
+          "open_alerts",
+          "unacknowledged_alerts",
+          "simulated_deliveries",
+          "farmer_reports_last_7_days"
+        ],
+        "title": "DashboardTotals"
+      },
+      "DatasetStatus": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "task": {
+            "type": "string",
+            "title": "Task"
+          },
+          "source_url": {
+            "type": "string",
+            "title": "Source Url"
+          },
+          "licence": {
+            "type": "string",
+            "title": "Licence"
+          },
+          "licence_verified": {
+            "type": "boolean",
+            "title": "Licence Verified"
+          },
+          "access": {
+            "type": "string",
+            "title": "Access"
+          },
+          "local_status": {
+            "type": "string",
+            "enum": [
+              "missing",
+              "present",
+              "invalid",
+              "not_applicable"
+            ],
+            "title": "Local Status"
+          },
+          "local_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Local Path"
+          },
+          "files_found": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Files Found"
+          },
+          "validation": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validation"
+          },
+          "used_in_pipeline": {
+            "type": "boolean",
+            "title": "Used In Pipeline"
+          },
+          "data_nature": {
+            "type": "string",
+            "title": "Data Nature",
+            "description": "Whether the records were measured, generated, or are unknown"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "task",
+          "source_url",
+          "licence",
+          "licence_verified",
+          "access",
+          "local_status",
+          "local_path",
+          "files_found",
+          "validation",
+          "used_in_pipeline",
+          "data_nature",
+          "notes"
+        ],
+        "title": "DatasetStatus"
+      },
+      "DeliveryAttempt": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "whatsapp",
+              "sms",
+              "voice"
+            ],
+            "title": "Channel"
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "kn",
+              "en"
+            ],
+            "title": "Language"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "attempt_number": {
+            "type": "integer",
+            "title": "Attempt Number"
+          },
+          "attempted_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Attempted At"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "simulated_delivered",
+              "simulated_failed"
+            ],
+            "title": "Status"
+          },
+          "provider_mode": {
+            "type": "string",
+            "const": "mock",
+            "title": "Provider Mode"
+          },
+          "provider_name": {
+            "type": "string",
+            "title": "Provider Name"
+          },
+          "recipient_masked": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipient Masked"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DeliveryError"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "retry_allowed": {
+            "type": "boolean",
+            "title": "Retry Allowed"
+          },
+          "simulated": {
+            "type": "boolean",
+            "const": true,
+            "title": "Simulated",
+            "default": true
+          },
+          "external_request_made": {
+            "type": "boolean",
+            "const": false,
+            "title": "External Request Made",
+            "description": "The mock provider never calls an external service or phone network",
+            "default": false
+          },
+          "simulated_call_duration_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Simulated Call Duration S",
+            "description": "Voice channel only (simulated)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "channel",
+          "language",
+          "message",
+          "attempt_number",
+          "attempted_at",
+          "status",
+          "provider_mode",
+          "provider_name",
+          "recipient_masked",
+          "retry_allowed"
+        ],
+        "title": "DeliveryAttempt"
+      },
+      "DeliveryError": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "DeliveryError"
+      },
+      "Envelope_Alert_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Alert"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[Alert]"
+      },
+      "Envelope_Approach_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Approach"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[Approach]"
+      },
+      "Envelope_CalibrationHistory_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CalibrationHistory"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[CalibrationHistory]"
+      },
+      "Envelope_CooperativeSummary_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CooperativeSummary"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[CooperativeSummary]"
+      },
+      "Envelope_DashboardSummary_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DashboardSummary"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[DashboardSummary]"
+      },
+      "Envelope_FarmerReport_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/FarmerReport"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[FarmerReport]"
+      },
+      "Envelope_FeedbackResult_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/FeedbackResult"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[FeedbackResult]"
+      },
+      "Envelope_Forecast_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Forecast"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[Forecast]"
+      },
+      "Envelope_MlStatus_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/MlStatus"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[MlStatus]"
+      },
+      "Envelope_Pond_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Pond"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[Pond]"
+      },
+      "Envelope_SimulateSendResult_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/SimulateSendResult"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[SimulateSendResult]"
+      },
+      "Envelope_WaterCheck_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/WaterCheck"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[WaterCheck]"
+      },
+      "Envelope_list_ScenarioPreset__": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioPreset"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[list[ScenarioPreset]]"
+      },
+      "ErrorDetail": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "examples": [
+              "validation_error",
+              "not_found",
+              "conflict"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "details": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ErrorDetail"
+      },
+      "ErrorEnvelope": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorDetail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "title": "ErrorEnvelope"
+      },
+      "ExperimentStatus": {
+        "properties": {
+          "experiment_id": {
+            "type": "string",
+            "title": "Experiment Id"
+          },
+          "dataset_id": {
+            "type": "string",
+            "title": "Dataset Id"
+          },
+          "data_origin": {
+            "type": "string",
+            "enum": [
+              "external",
+              "synthetic"
+            ],
+            "title": "Data Origin",
+            "description": "external = downloaded third-party dataset (see its data_nature); synthetic = generated here"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "completed",
+              "failed"
+            ],
+            "title": "Status"
+          },
+          "trained_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trained At"
+          },
+          "task": {
+            "type": "string",
+            "title": "Task"
+          },
+          "target": {
+            "type": "string",
+            "title": "Target"
+          },
+          "split": {
+            "type": "string",
+            "title": "Split"
+          },
+          "n_train": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "N Train"
+          },
+          "n_test": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "N Test"
+          },
+          "model_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Type"
+          },
+          "metrics": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metrics"
+          },
+          "artifact_available": {
+            "type": "boolean",
+            "title": "Artifact Available"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Warnings"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "experiment_id",
+          "dataset_id",
+          "data_origin",
+          "status",
+          "trained_at",
+          "task",
+          "target",
+          "split",
+          "n_train",
+          "n_test",
+          "model_type",
+          "metrics",
+          "artifact_available",
+          "warnings"
+        ],
+        "title": "ExperimentStatus"
+      },
+      "FarmerReport": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "pond_id": {
+            "type": "string",
+            "title": "Pond Id"
+          },
+          "district": {
+            "type": "string",
+            "title": "District"
+          },
+          "village_cluster": {
+            "type": "string",
+            "title": "Village Cluster"
+          },
+          "symptoms": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "gasping_at_surface",
+                "reduced_feeding",
+                "lethargy",
+                "erratic_swimming",
+                "red_patches_or_lesions",
+                "white_spots",
+                "fin_or_tail_rot",
+                "cotton_like_growth",
+                "bloated_abdomen",
+                "abnormal_mortality"
+              ]
+            },
+            "type": "array",
+            "title": "Symptoms"
+          },
+          "mortality_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mortality Count"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observed At"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "is_demo_record": {
+            "type": "boolean",
+            "title": "Is Demo Record"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "pond_id",
+          "district",
+          "village_cluster",
+          "symptoms",
+          "mortality_count",
+          "note",
+          "observed_at",
+          "created_at",
+          "is_demo_record"
+        ],
+        "title": "FarmerReport"
+      },
+      "FarmerReportCreate": {
+        "properties": {
+          "pond_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Pond Id"
+          },
+          "symptoms": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "gasping_at_surface",
+                "reduced_feeding",
+                "lethargy",
+                "erratic_swimming",
+                "red_patches_or_lesions",
+                "white_spots",
+                "fin_or_tail_rot",
+                "cotton_like_growth",
+                "bloated_abdomen",
+                "abnormal_mortality"
+              ]
+            },
+            "type": "array",
+            "title": "Symptoms"
+          },
+          "mortality_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mortality Count"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observed At"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "pond_id",
+          "observed_at"
+        ],
+        "title": "FarmerReportCreate"
+      },
+      "FeedbackRequest": {
+        "properties": {
+          "forecast_id": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Forecast Id"
+          },
+          "observation": {
+            "type": "string",
+            "enum": [
+              "no_stress_seen",
+              "fish_gasping_at_dawn",
+              "fish_mortality_overnight",
+              "not_checked"
+            ],
+            "title": "Observation"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observed At"
+          },
+          "aerator_used": {
+            "type": "boolean",
+            "title": "Aerator Used",
+            "description": "Aerators ran overnight; the outcome then says little about natural demand",
+            "default": false
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "forecast_id",
+          "observation",
+          "observed_at"
+        ],
+        "title": "FeedbackRequest"
+      },
+      "FeedbackResult": {
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/CalibrationEvent"
+          },
+          "calibration": {
+            "$ref": "#/components/schemas/CalibrationState"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event",
+          "calibration"
+        ],
+        "title": "FeedbackResult"
+      },
+      "Forecast": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "pond_id": {
+            "type": "string",
+            "title": "Pond Id"
+          },
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "forecast_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Forecast Date"
+          },
+          "window_start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Window Start"
+          },
+          "window_end": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Window End"
+          },
+          "timezone": {
+            "type": "string",
+            "title": "Timezone",
+            "default": "Asia/Kolkata (UTC+05:30)"
+          },
+          "hourly": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastPoint"
+            },
+            "type": "array",
+            "title": "Hourly"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ForecastSummary"
+          },
+          "factors": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastFactor"
+            },
+            "type": "array",
+            "title": "Factors"
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/ActionSuggestion"
+            },
+            "type": "array",
+            "title": "Actions"
+          },
+          "missing_data": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Missing Data"
+          },
+          "resolved_inputs": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Resolved Inputs"
+          },
+          "calibration_applied": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Calibration Applied"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/ForecastProvenance"
+          },
+          "alert_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alert Id"
+          },
+          "is_demo_record": {
+            "type": "boolean",
+            "title": "Is Demo Record",
+            "default": false
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "pond_id",
+          "generated_at",
+          "forecast_date",
+          "window_start",
+          "window_end",
+          "hourly",
+          "summary",
+          "factors",
+          "actions",
+          "missing_data",
+          "resolved_inputs",
+          "calibration_applied",
+          "provenance",
+          "disclaimer"
+        ],
+        "title": "Forecast"
+      },
+      "ForecastFactor": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "input_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Input Value"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "reference_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference Value"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "increases_risk",
+              "decreases_risk",
+              "neutral"
+            ],
+            "title": "Effect"
+          },
+          "contribution_points": {
+            "type": "number",
+            "title": "Contribution Points",
+            "description": "Change in the window-average risk index versus the reference value, with all other inputs unchanged (one-at-a-time sensitivity)"
+          },
+          "value_source": {
+            "type": "string",
+            "enum": [
+              "observed",
+              "pond_profile",
+              "scenario_preset",
+              "user_override",
+              "open_meteo",
+              "default_assumption"
+            ],
+            "title": "Value Source"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "input_value",
+          "unit",
+          "reference_value",
+          "effect",
+          "contribution_points",
+          "value_source",
+          "explanation"
+        ],
+        "title": "ForecastFactor"
+      },
+      "ForecastPoint": {
+        "properties": {
+          "hour_index": {
+            "type": "integer",
+            "title": "Hour Index"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp",
+            "description": "Local IST timestamp (+05:30)"
+          },
+          "local_time": {
+            "type": "string",
+            "title": "Local Time"
+          },
+          "risk_index": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Risk Index",
+            "description": "Relative demo oxygen-risk index, 0-100"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "safe",
+              "watch",
+              "danger"
+            ],
+            "title": "Status"
+          },
+          "value_type": {
+            "type": "string",
+            "const": "synthetic_model_output",
+            "title": "Value Type",
+            "default": "synthetic_model_output"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hour_index",
+          "timestamp",
+          "local_time",
+          "risk_index",
+          "status"
+        ],
+        "title": "ForecastPoint"
+      },
+      "ForecastProvenance": {
+        "properties": {
+          "simulation": {
+            "type": "boolean",
+            "const": true,
+            "title": "Simulation",
+            "default": true
+          },
+          "output_type": {
+            "type": "string",
+            "const": "relative_risk_index",
+            "title": "Output Type",
+            "default": "relative_risk_index"
+          },
+          "model_mode": {
+            "type": "string",
+            "const": "demo_physics_inspired",
+            "title": "Model Mode",
+            "default": "demo_physics_inspired"
+          },
+          "implementation_status": {
+            "type": "string",
+            "const": "demo",
+            "title": "Implementation Status",
+            "default": "demo"
+          },
+          "engine_version": {
+            "type": "string",
+            "title": "Engine Version"
+          },
+          "calibrated_to_measured_do": {
+            "type": "boolean",
+            "const": false,
+            "title": "Calibrated To Measured Do",
+            "default": false
+          },
+          "ml_correction": {
+            "$ref": "#/components/schemas/MlCorrectionInfo"
+          },
+          "weather_source": {
+            "type": "string",
+            "enum": [
+              "scenario_preset",
+              "scenario_with_overrides",
+              "open_meteo",
+              "demo_fallback"
+            ],
+            "title": "Weather Source"
+          },
+          "weather_fallback_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weather Fallback Reason"
+          },
+          "inputs_hash": {
+            "type": "string",
+            "title": "Inputs Hash",
+            "description": "SHA-256 of the resolved inputs; equal inputs give equal outputs"
+          },
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Assumptions"
+          },
+          "classification_thresholds": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Classification Thresholds"
+          }
+        },
+        "type": "object",
+        "required": [
+          "engine_version",
+          "ml_correction",
+          "weather_source",
+          "inputs_hash",
+          "assumptions",
+          "classification_thresholds"
+        ],
+        "title": "ForecastProvenance"
+      },
+      "ForecastRequest": {
+        "properties": {
+          "forecast_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast Date",
+            "description": "Evening on which the window starts (IST). Defaults to today in IST."
+          },
+          "start_hour": {
+            "type": "integer",
+            "maximum": 21.0,
+            "minimum": 16.0,
+            "title": "Start Hour",
+            "description": "Local hour (IST) at which the window starts",
+            "default": 18
+          },
+          "end_hour": {
+            "type": "integer",
+            "maximum": 8.0,
+            "minimum": 4.0,
+            "title": "End Hour",
+            "description": "Local hour (IST) next morning at which the window ends",
+            "default": 6
+          },
+          "scenario": {
+            "type": "string",
+            "enum": [
+              "clear_calm_night",
+              "overcast_still_night",
+              "monsoon_heavy_rain",
+              "windy_clear_night",
+              "hot_humid_still"
+            ],
+            "title": "Scenario",
+            "default": "clear_calm_night"
+          },
+          "weather": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WeatherInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "water": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ForecastWaterInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "aerator_planned": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aerator Planned",
+            "description": "Whether aerators will run overnight. Defaults to the pond's has_aerator value."
+          },
+          "feeding_plan": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "reduced",
+              "skipped"
+            ],
+            "title": "Feeding Plan",
+            "default": "normal"
+          },
+          "use_live_weather": {
+            "type": "boolean",
+            "title": "Use Live Weather",
+            "description": "Try Open-Meteo when WEATHER_PROVIDER=open_meteo; falls back to the scenario on failure.",
+            "default": false
+          },
+          "create_alert": {
+            "type": "boolean",
+            "title": "Create Alert",
+            "description": "Create a pending alert when the result is watch or danger",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ForecastRequest"
+      },
+      "ForecastSummary": {
+        "properties": {
+          "peak_risk_index": {
+            "type": "number",
+            "title": "Peak Risk Index"
+          },
+          "mean_risk_index": {
+            "type": "number",
+            "title": "Mean Risk Index"
+          },
+          "peak_risk_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Peak Risk Time",
+            "description": "Hour with the highest simulated relative risk — not a predicted oxygen-crash time"
+          },
+          "overall_status": {
+            "type": "string",
+            "enum": [
+              "safe",
+              "watch",
+              "danger"
+            ],
+            "title": "Overall Status"
+          },
+          "hours_watch": {
+            "type": "integer",
+            "title": "Hours Watch"
+          },
+          "hours_danger": {
+            "type": "integer",
+            "title": "Hours Danger"
+          },
+          "headline": {
+            "type": "string",
+            "title": "Headline"
+          }
+        },
+        "type": "object",
+        "required": [
+          "peak_risk_index",
+          "mean_risk_index",
+          "peak_risk_time",
+          "overall_status",
+          "hours_watch",
+          "hours_danger",
+          "headline"
+        ],
+        "title": "ForecastSummary"
+      },
+      "ForecastWaterInput": {
+        "properties": {
+          "water_temp_c": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 40.0,
+                "minimum": 10.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Water Temp C",
+            "description": "Evening water temperature, °C"
+          },
+          "dissolved_oxygen_mg_l": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 25.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dissolved Oxygen Mg L",
+            "description": "Evening dissolved oxygen measured with a meter or kit, mg/L"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ForecastWaterInput",
+        "description": "Optional evening observations entered by the farmer (treated as observed inputs)."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Health": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok",
+            "title": "Status"
+          },
+          "app_env": {
+            "type": "string",
+            "title": "App Env"
+          },
+          "database": {
+            "type": "string",
+            "const": "ok",
+            "title": "Database"
+          },
+          "alert_provider": {
+            "type": "string",
+            "title": "Alert Provider"
+          },
+          "weather_provider": {
+            "type": "string",
+            "title": "Weather Provider"
+          },
+          "external_credentials_required": {
+            "type": "boolean",
+            "const": false,
+            "title": "External Credentials Required",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "app_env",
+          "database",
+          "alert_provider",
+          "weather_provider"
+        ],
+        "title": "Health"
+      },
+      "ListEnvelope_Alert_": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Alert"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ListMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ListEnvelope[Alert]"
+      },
+      "ListEnvelope_FarmerReport_": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/FarmerReport"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ListMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ListEnvelope[FarmerReport]"
+      },
+      "ListEnvelope_Forecast_": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Forecast"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ListMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ListEnvelope[Forecast]"
+      },
+      "ListEnvelope_Pond_": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Pond"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ListMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ListEnvelope[Pond]"
+      },
+      "ListEnvelope_WaterCheck_": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/WaterCheck"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ListMeta"
+          }
+        },
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "ListEnvelope[WaterCheck]"
+      },
+      "ListMeta": {
+        "properties": {
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "demo_mode": {
+            "type": "boolean",
+            "title": "Demo Mode",
+            "description": "Always true in this MVP: data is synthetic or user-entered demo data.",
+            "default": true
+          },
+          "api_version": {
+            "type": "string",
+            "title": "Api Version",
+            "default": "v1"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          }
+        },
+        "type": "object",
+        "required": [
+          "generated_at",
+          "pagination"
+        ],
+        "title": "ListMeta"
+      },
+      "LocalizedText": {
+        "properties": {
+          "en": {
+            "type": "string",
+            "title": "En"
+          },
+          "kn": {
+            "type": "string",
+            "title": "Kn"
+          }
+        },
+        "type": "object",
+        "required": [
+          "en",
+          "kn"
+        ],
+        "title": "LocalizedText"
+      },
+      "Meta": {
+        "properties": {
+          "generated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Generated At"
+          },
+          "demo_mode": {
+            "type": "boolean",
+            "title": "Demo Mode",
+            "description": "Always true in this MVP: data is synthetic or user-entered demo data.",
+            "default": true
+          },
+          "api_version": {
+            "type": "string",
+            "title": "Api Version",
+            "default": "v1"
+          }
+        },
+        "type": "object",
+        "required": [
+          "generated_at"
+        ],
+        "title": "Meta"
+      },
+      "MlCorrectionInfo": {
+        "properties": {
+          "applied": {
+            "type": "boolean",
+            "title": "Applied"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "applied",
+          "reason"
+        ],
+        "title": "MlCorrectionInfo"
+      },
+      "MlStatus": {
+        "properties": {
+          "overall_state": {
+            "type": "string",
+            "enum": [
+              "no_runs",
+              "synthetic_only",
+              "trained_on_external_data"
+            ],
+            "title": "Overall State"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          },
+          "datasets": {
+            "items": {
+              "$ref": "#/components/schemas/DatasetStatus"
+            },
+            "type": "array",
+            "title": "Datasets"
+          },
+          "experiments": {
+            "items": {
+              "$ref": "#/components/schemas/ExperimentStatus"
+            },
+            "type": "array",
+            "title": "Experiments"
+          },
+          "ml_correction_in_forecast": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Ml Correction In Forecast"
+          },
+          "optional_libraries": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "type": "object",
+            "title": "Optional Libraries"
+          },
+          "how_to_run": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "How To Run"
+          }
+        },
+        "type": "object",
+        "required": [
+          "overall_state",
+          "summary",
+          "datasets",
+          "experiments",
+          "ml_correction_in_forecast",
+          "optional_libraries",
+          "how_to_run"
+        ],
+        "title": "MlStatus"
+      },
+      "Pagination": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          },
+          "offset": {
+            "type": "integer",
+            "title": "Offset"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "limit",
+          "offset"
+        ],
+        "title": "Pagination"
+      },
+      "Pond": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "farmer_name": {
+            "type": "string",
+            "title": "Farmer Name"
+          },
+          "contact_phone_masked": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone Masked"
+          },
+          "district": {
+            "type": "string",
+            "enum": [
+              "Udupi",
+              "Dakshina Kannada",
+              "Uttara Kannada",
+              "Other"
+            ],
+            "title": "District"
+          },
+          "village_cluster": {
+            "type": "string",
+            "title": "Village Cluster"
+          },
+          "area_m2": {
+            "type": "number",
+            "title": "Area M2"
+          },
+          "depth_m": {
+            "type": "number",
+            "title": "Depth M"
+          },
+          "species": {
+            "type": "string",
+            "enum": [
+              "indian_major_carp_polyculture",
+              "tilapia",
+              "pangasius",
+              "pacific_white_shrimp",
+              "other"
+            ],
+            "title": "Species"
+          },
+          "water_type": {
+            "type": "string",
+            "enum": [
+              "freshwater",
+              "brackish"
+            ],
+            "title": "Water Type"
+          },
+          "stocking_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stocking Date"
+          },
+          "stocked_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stocked Count"
+          },
+          "estimated_biomass_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Biomass Kg"
+          },
+          "has_aerator": {
+            "type": "boolean",
+            "title": "Has Aerator"
+          },
+          "aerator_count": {
+            "type": "integer",
+            "title": "Aerator Count"
+          },
+          "preferred_language": {
+            "type": "string",
+            "enum": [
+              "kn",
+              "en"
+            ],
+            "title": "Preferred Language"
+          },
+          "alert_channels": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "whatsapp",
+                "sms",
+                "voice"
+              ]
+            },
+            "type": "array",
+            "title": "Alert Channels"
+          },
+          "is_demo_record": {
+            "type": "boolean",
+            "title": "Is Demo Record",
+            "description": "True for seeded synthetic ponds"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "latest_status": {
+            "$ref": "#/components/schemas/PondLatestStatus"
+          },
+          "calibration": {
+            "$ref": "#/components/schemas/PondCalibrationSummary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "farmer_name",
+          "contact_phone_masked",
+          "district",
+          "village_cluster",
+          "area_m2",
+          "depth_m",
+          "species",
+          "water_type",
+          "stocking_date",
+          "stocked_count",
+          "estimated_biomass_kg",
+          "has_aerator",
+          "aerator_count",
+          "preferred_language",
+          "alert_channels",
+          "is_demo_record",
+          "created_at",
+          "updated_at",
+          "latest_status",
+          "calibration"
+        ],
+        "title": "Pond"
+      },
+      "PondCalibrationSummary": {
+        "properties": {
+          "demand_multiplier": {
+            "type": "number",
+            "title": "Demand Multiplier"
+          },
+          "feedback_count": {
+            "type": "integer",
+            "title": "Feedback Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "demand_multiplier",
+          "feedback_count"
+        ],
+        "title": "PondCalibrationSummary"
+      },
+      "PondCreate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "examples": [
+              "North Pond"
+            ]
+          },
+          "farmer_name": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Farmer Name"
+          },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\+91\\d{10}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone",
+            "description": "E.164 Indian number, e.g. +919800000000. Stored locally, masked in responses. The mock provider never contacts it."
+          },
+          "district": {
+            "type": "string",
+            "enum": [
+              "Udupi",
+              "Dakshina Kannada",
+              "Uttara Kannada",
+              "Other"
+            ],
+            "title": "District"
+          },
+          "village_cluster": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Village Cluster"
+          },
+          "area_m2": {
+            "type": "number",
+            "maximum": 200000.0,
+            "minimum": 50.0,
+            "title": "Area M2",
+            "description": "Water surface area in square metres"
+          },
+          "depth_m": {
+            "type": "number",
+            "maximum": 5.0,
+            "minimum": 0.3,
+            "title": "Depth M",
+            "description": "Average water depth in metres"
+          },
+          "species": {
+            "type": "string",
+            "enum": [
+              "indian_major_carp_polyculture",
+              "tilapia",
+              "pangasius",
+              "pacific_white_shrimp",
+              "other"
+            ],
+            "title": "Species"
+          },
+          "water_type": {
+            "type": "string",
+            "enum": [
+              "freshwater",
+              "brackish"
+            ],
+            "title": "Water Type",
+            "default": "freshwater"
+          },
+          "stocking_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stocking Date"
+          },
+          "stocked_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 5000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stocked Count"
+          },
+          "estimated_biomass_kg": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 200000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Biomass Kg",
+            "description": "Farmer's estimate of standing fish/shrimp biomass"
+          },
+          "has_aerator": {
+            "type": "boolean",
+            "title": "Has Aerator",
+            "default": false
+          },
+          "aerator_count": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Aerator Count",
+            "default": 0
+          },
+          "preferred_language": {
+            "type": "string",
+            "enum": [
+              "kn",
+              "en"
+            ],
+            "title": "Preferred Language",
+            "default": "kn"
+          },
+          "alert_channels": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "whatsapp",
+                "sms",
+                "voice"
+              ]
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Alert Channels"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "farmer_name",
+          "district",
+          "village_cluster",
+          "area_m2",
+          "depth_m",
+          "species"
+        ],
+        "title": "PondCreate"
+      },
+      "PondLatestStatus": {
+        "properties": {
+          "forecast_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "safe",
+                  "watch",
+                  "danger"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast Status"
+          },
+          "forecast_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast Id"
+          },
+          "forecast_generated_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast Generated At"
+          },
+          "forecast_peak_risk_index": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forecast Peak Risk Index"
+          },
+          "water_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "safe",
+                  "watch",
+                  "danger"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Water Status"
+          },
+          "water_check_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Water Check Id"
+          },
+          "water_checked_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Water Checked At"
+          },
+          "overall_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "safe",
+                  "watch",
+                  "danger"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overall Status",
+            "description": "Worse of the latest forecast and latest water-check status"
+          }
+        },
+        "type": "object",
+        "title": "PondLatestStatus"
+      },
+      "PondUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "farmer_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Farmer Name"
+          },
+          "contact_phone": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\+91\\d{10}$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contact Phone"
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "Udupi",
+                  "Dakshina Kannada",
+                  "Uttara Kannada",
+                  "Other"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "District"
+          },
+          "village_cluster": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Village Cluster"
+          },
+          "area_m2": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 200000.0,
+                "minimum": 50.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Area M2"
+          },
+          "depth_m": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 5.0,
+                "minimum": 0.3
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Depth M"
+          },
+          "species": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "indian_major_carp_polyculture",
+                  "tilapia",
+                  "pangasius",
+                  "pacific_white_shrimp",
+                  "other"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Species"
+          },
+          "water_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "freshwater",
+                  "brackish"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Water Type"
+          },
+          "stocking_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stocking Date"
+          },
+          "stocked_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 5000000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stocked Count"
+          },
+          "estimated_biomass_kg": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 200000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Biomass Kg"
+          },
+          "has_aerator": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Has Aerator"
+          },
+          "aerator_count": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Aerator Count"
+          },
+          "preferred_language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "kn",
+                  "en"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferred Language"
+          },
+          "alert_channels": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "whatsapp",
+                    "sms",
+                    "voice"
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alert Channels"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "PondUpdate"
+      },
+      "RuleResult": {
+        "properties": {
+          "rule_id": {
+            "type": "string",
+            "title": "Rule Id"
+          },
+          "parameter": {
+            "type": "string",
+            "title": "Parameter"
+          },
+          "observed_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed Value"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "safe",
+              "watch",
+              "danger"
+            ],
+            "title": "Status"
+          },
+          "threshold_description": {
+            "type": "string",
+            "title": "Threshold Description"
+          },
+          "explanation": {
+            "type": "string",
+            "title": "Explanation"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "rule_id",
+          "parameter",
+          "observed_value",
+          "unit",
+          "status",
+          "threshold_description",
+          "explanation",
+          "source"
+        ],
+        "title": "RuleResult"
+      },
+      "ScenarioPreset": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "clear_calm_night",
+              "overcast_still_night",
+              "monsoon_heavy_rain",
+              "windy_clear_night",
+              "hot_humid_still"
+            ],
+            "title": "Name"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "weather": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object",
+            "title": "Weather"
+          },
+          "synthetic": {
+            "type": "boolean",
+            "const": true,
+            "title": "Synthetic",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "label",
+          "description",
+          "weather"
+        ],
+        "title": "ScenarioPreset"
+      },
+      "SimulateSendRequest": {
+        "properties": {
+          "channels": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "whatsapp",
+                    "sms",
+                    "voice"
+                  ]
+                },
+                "type": "array",
+                "minItems": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channels",
+            "description": "Defaults to the pond's alert_channels"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "kn",
+                  "en"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "description": "Defaults to the pond's preferred_language"
+          },
+          "simulate_failure_channels": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "whatsapp",
+                "sms",
+                "voice"
+              ]
+            },
+            "type": "array",
+            "title": "Simulate Failure Channels",
+            "description": "Demo control: force these channels to record a simulated failure"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "SimulateSendRequest"
+      },
+      "SimulateSendResult": {
+        "properties": {
+          "alert": {
+            "$ref": "#/components/schemas/Alert"
+          },
+          "attempts": {
+            "items": {
+              "$ref": "#/components/schemas/DeliveryAttempt"
+            },
+            "type": "array",
+            "title": "Attempts"
+          },
+          "notice": {
+            "type": "string",
+            "title": "Notice"
+          }
+        },
+        "type": "object",
+        "required": [
+          "alert",
+          "attempts",
+          "notice"
+        ],
+        "title": "SimulateSendResult"
+      },
+      "ThresholdProfileInfo": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "status": {
+            "type": "string",
+            "const": "demonstration_settings",
+            "title": "Status"
+          },
+          "validated": {
+            "type": "boolean",
+            "title": "Validated"
+          },
+          "applies_to": {
+            "type": "string",
+            "title": "Applies To"
+          },
+          "notes": {
+            "type": "string",
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "status",
+          "validated",
+          "applies_to",
+          "notes"
+        ],
+        "title": "ThresholdProfileInfo"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WaterCheck": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "pond_id": {
+            "type": "string",
+            "title": "Pond Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observed At"
+          },
+          "inputs": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Inputs"
+          },
+          "derived": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "object",
+            "title": "Derived"
+          },
+          "overall_status": {
+            "type": "string",
+            "enum": [
+              "safe",
+              "watch",
+              "danger"
+            ],
+            "title": "Overall Status"
+          },
+          "triggered_rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleResult"
+            },
+            "type": "array",
+            "title": "Triggered Rules"
+          },
+          "evaluated_rules": {
+            "items": {
+              "$ref": "#/components/schemas/RuleResult"
+            },
+            "type": "array",
+            "title": "Evaluated Rules"
+          },
+          "missing_parameters": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Missing Parameters"
+          },
+          "next_steps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Next Steps"
+          },
+          "referral": {
+            "type": "string",
+            "title": "Referral"
+          },
+          "threshold_profile": {
+            "$ref": "#/components/schemas/ThresholdProfileInfo"
+          },
+          "alert_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alert Id"
+          },
+          "is_demo_record": {
+            "type": "boolean",
+            "title": "Is Demo Record",
+            "default": false
+          },
+          "disclaimer": {
+            "type": "string",
+            "title": "Disclaimer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "pond_id",
+          "created_at",
+          "observed_at",
+          "inputs",
+          "derived",
+          "overall_status",
+          "triggered_rules",
+          "evaluated_rules",
+          "missing_parameters",
+          "next_steps",
+          "referral",
+          "threshold_profile",
+          "disclaimer"
+        ],
+        "title": "WaterCheck"
+      },
+      "WaterCheckRequest": {
+        "properties": {
+          "ph": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 14.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ph",
+            "description": "pH (unitless)"
+          },
+          "water_temp_c": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 45.0,
+                "minimum": 5.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Water Temp C",
+            "description": "Water temperature, °C"
+          },
+          "total_ammonia_mg_l": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 50.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Ammonia Mg L",
+            "description": "Total ammonia nitrogen (TAN), mg/L as N, from a test kit"
+          },
+          "nitrite_mg_l": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 50.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nitrite Mg L",
+            "description": "Nitrite, mg/L as NO2-N"
+          },
+          "dissolved_oxygen_mg_l": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 25.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dissolved Oxygen Mg L",
+            "description": "Dissolved oxygen, mg/L"
+          },
+          "symptoms": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "gasping_at_surface",
+                "reduced_feeding",
+                "lethargy",
+                "erratic_swimming",
+                "red_patches_or_lesions",
+                "white_spots",
+                "fin_or_tail_rot",
+                "cotton_like_growth",
+                "bloated_abdomen",
+                "abnormal_mortality"
+              ]
+            },
+            "type": "array",
+            "title": "Symptoms"
+          },
+          "observed_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed At",
+            "description": "When the sample/observation was taken (defaults to now)"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "create_alert": {
+            "type": "boolean",
+            "title": "Create Alert",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "WaterCheckRequest"
+      },
+      "WeatherInput": {
+        "properties": {
+          "air_temp_evening_c": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 45.0,
+                "minimum": 10.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Air Temp Evening C",
+            "description": "Air temperature at window start, °C"
+          },
+          "air_temp_min_c": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 40.0,
+                "minimum": 5.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Air Temp Min C",
+            "description": "Overnight minimum air temperature, °C"
+          },
+          "cloud_cover_pct": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cloud Cover Pct",
+            "description": "Mean daytime cloud cover, %"
+          },
+          "sunshine_hours_today": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 13.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sunshine Hours Today",
+            "description": "Bright sunshine hours during the preceding day"
+          },
+          "wind_speed_ms": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 30.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wind Speed Ms",
+            "description": "Mean overnight wind speed at 10 m, m/s"
+          },
+          "rainfall_mm": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 400.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rainfall Mm",
+            "description": "Rain expected during the forecast window, mm"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "WeatherInput",
+        "description": "Evening-to-morning weather summary. Any omitted field is taken from the scenario preset."
+      }
+    }
+  }
+}

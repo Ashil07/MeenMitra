@@ -1,0 +1,73 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/ponds",
+    "body": {
+      "name": "Example Pond",
+      "farmer_name": "Example Farmer",
+      "contact_phone": "+910000000042",
+      "district": "Udupi",
+      "village_cluster": "Example Cluster",
+      "area_m2": 1500,
+      "depth_m": 1.2,
+      "species": "tilapia",
+      "estimated_biomass_kg": 900,
+      "has_aerator": true,
+      "aerator_count": 1,
+      "preferred_language": "kn",
+      "alert_channels": [
+        "whatsapp",
+        "sms"
+      ]
+    }
+  },
+  "response": {
+    "status": 201,
+    "body": {
+      "data": {
+        "id": "pond_86b94f29c625",
+        "name": "Example Pond",
+        "farmer_name": "Example Farmer",
+        "contact_phone_masked": "•••••• 0042",
+        "district": "Udupi",
+        "village_cluster": "Example Cluster",
+        "area_m2": 1500.0,
+        "depth_m": 1.2,
+        "species": "tilapia",
+        "water_type": "freshwater",
+        "stocking_date": null,
+        "stocked_count": null,
+        "estimated_biomass_kg": 900.0,
+        "has_aerator": true,
+        "aerator_count": 1,
+        "preferred_language": "kn",
+        "alert_channels": [
+          "whatsapp",
+          "sms"
+        ],
+        "is_demo_record": false,
+        "created_at": "2026-10-01T05:00:00Z",
+        "updated_at": "2026-10-01T05:00:00Z",
+        "latest_status": {
+          "forecast_status": null,
+          "forecast_id": null,
+          "forecast_generated_at": null,
+          "forecast_peak_risk_index": null,
+          "water_status": null,
+          "water_check_id": null,
+          "water_checked_at": null,
+          "overall_status": null
+        },
+        "calibration": {
+          "demand_multiplier": 1.0,
+          "feedback_count": 0
+        }
+      },
+      "meta": {
+        "generated_at": "2026-10-01T05:00:00Z",
+        "demo_mode": true,
+        "api_version": "v1"
+      }
+    }
+  }
+}

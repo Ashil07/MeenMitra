@@ -1,0 +1,69 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/ponds",
+    "body": {
+      "name": "x",
+      "area_m2": -1
+    }
+  },
+  "response": {
+    "status": 422,
+    "body": {
+      "error": {
+        "code": "validation_error",
+        "message": "Request validation failed",
+        "details": [
+          {
+            "loc": [
+              "body",
+              "farmer_name"
+            ],
+            "msg": "Field required",
+            "type": "missing"
+          },
+          {
+            "loc": [
+              "body",
+              "district"
+            ],
+            "msg": "Field required",
+            "type": "missing"
+          },
+          {
+            "loc": [
+              "body",
+              "village_cluster"
+            ],
+            "msg": "Field required",
+            "type": "missing"
+          },
+          {
+            "loc": [
+              "body",
+              "area_m2"
+            ],
+            "msg": "Input should be greater than or equal to 50",
+            "type": "greater_than_equal"
+          },
+          {
+            "loc": [
+              "body",
+              "depth_m"
+            ],
+            "msg": "Field required",
+            "type": "missing"
+          },
+          {
+            "loc": [
+              "body",
+              "species"
+            ],
+            "msg": "Field required",
+            "type": "missing"
+          }
+        ]
+      }
+    }
+  }
+}

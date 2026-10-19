@@ -1,0 +1,162 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/ponds/pond_demo_002/water-check",
+    "body": {
+      "ph": 8.6,
+      "water_temp_c": 30.5,
+      "total_ammonia_mg_l": 1.2,
+      "nitrite_mg_l": 0.2,
+      "dissolved_oxygen_mg_l": 3.8,
+      "symptoms": [
+        "reduced_feeding"
+      ],
+      "observed_at": "2026-10-01T06:00:00+05:30"
+    }
+  },
+  "response": {
+    "status": 201,
+    "body": {
+      "data": {
+        "id": "wc_7746ee6b6223",
+        "pond_id": "pond_demo_002",
+        "created_at": "2026-10-01T05:00:00Z",
+        "observed_at": "2026-10-01T06:00:00+05:30",
+        "inputs": {
+          "ph": 8.6,
+          "water_temp_c": 30.5,
+          "total_ammonia_mg_l": 1.2,
+          "nitrite_mg_l": 0.2,
+          "dissolved_oxygen_mg_l": 3.8,
+          "symptoms": [
+            "reduced_feeding"
+          ],
+          "note": null
+        },
+        "derived": {
+          "unionized_ammonia_fraction": 0.24853,
+          "unionized_ammonia_mg_l": 0.29824
+        },
+        "overall_status": "danger",
+        "triggered_rules": [
+          {
+            "rule_id": "dissolved_oxygen_mg_l_band",
+            "parameter": "dissolved_oxygen_mg_l",
+            "observed_value": 3.8,
+            "unit": "mg/L",
+            "status": "watch",
+            "threshold_description": "danger: below 3.0 mg/L; watch: 3.0 to below 5.0 mg/L; safe: 5.0 mg/L or above",
+            "explanation": "Dissolved oxygen of 3.8 mg/L falls in the 'watch' band.",
+            "source": "Demonstration setting — informed by general warm-water aquaculture guidance; not validated"
+          },
+          {
+            "rule_id": "unionized_ammonia_mg_l_band",
+            "parameter": "unionized_ammonia_mg_l",
+            "observed_value": 0.2982,
+            "unit": "mg/L NH3-N",
+            "status": "danger",
+            "threshold_description": "safe: below 0.05 mg/L NH3-N; watch: 0.05 to below 0.2 mg/L NH3-N; danger: 0.2 mg/L NH3-N or above",
+            "explanation": "Un-ionised ammonia (derived from TAN, pH and temperature) of 0.2982 mg/L NH3-N falls in the 'danger' band. Derived from TAN 1.2 mg/L at pH 8.6 and 30.5 °C (Emerson et al., 1975); 24.85% of TAN is un-ionised under these conditions.",
+            "source": "Demonstration setting — informed by general warm-water aquaculture guidance; not validated"
+          },
+          {
+            "rule_id": "symptom_reduced_feeding",
+            "parameter": "symptom",
+            "observed_value": "reduced_feeding",
+            "unit": null,
+            "status": "watch",
+            "threshold_description": "reported symptom → watch",
+            "explanation": "Reduced feeding is an early, non-specific stress sign.",
+            "source": "Demonstration symptom rule; not a diagnosis"
+          }
+        ],
+        "evaluated_rules": [
+          {
+            "rule_id": "ph_band",
+            "parameter": "ph",
+            "observed_value": 8.6,
+            "unit": "pH units",
+            "status": "safe",
+            "threshold_description": "danger: below 6.0 pH units; watch: 6.0 to below 6.5 pH units; safe: 6.5 to below 9.0 pH units; watch: 9.0 to below 9.5 pH units; danger: 9.5 pH units or above",
+            "explanation": "pH of 8.6 pH units falls in the 'safe' band.",
+            "source": "Demonstration setting — informed by general warm-water aquaculture guidance; not validated"
+          },
+          {
+            "rule_id": "water_temp_c_band",
+            "parameter": "water_temp_c",
+            "observed_value": 30.5,
+            "unit": "°C",
+            "status": "safe",
+            "threshold_description": "danger: below 20.0 °C; watch: 20.0 to below 25.0 °C; safe: 25.0 to below 32.0 °C; watch: 32.0 to below 34.0 °C; danger: 34.0 °C or above",
+            "explanation": "Water temperature of 30.5 °C falls in the 'safe' band.",
+            "source": "Demonstration setting — informed by general warm-water aquaculture guidance; not validated"
+          },
+          {
+            "rule_id": "dissolved_oxygen_mg_l_band",
+            "parameter": "dissolved_oxygen_mg_l",
+            "observed_value": 3.8,
+            "unit": "mg/L",
+            "status": "watch",
+            "threshold_description": "danger: below 3.0 mg/L; watch: 3.0 to below 5.0 mg/L; safe: 5.0 mg/L or above",
+            "explanation": "Dissolved oxygen of 3.8 mg/L falls in the 'watch' band.",
+            "source": "Demonstration setting — informed by general warm-water aquaculture guidance; not validated"
+          },
+          {
+            "rule_id": "nitrite_mg_l_band",
+            "parameter": "nitrite_mg_l",
+            "observed_value": 0.2,
+            "unit": "mg/L NO2-N",
+            "status": "safe",
+            "threshold_description": "safe: below 0.3 mg/L NO2-N; watch: 0.3 to below 1.0 mg/L NO2-N; danger: 1.0 mg/L NO2-N or above",
+            "explanation": "Nitrite of 0.2 mg/L NO2-N falls in the 'safe' band.",
+            "source": "Demonstration setting — informed by general warm-water aquaculture guidance; not validated"
+          },
+          {
+            "rule_id": "unionized_ammonia_mg_l_band",
+            "parameter": "unionized_ammonia_mg_l",
+            "observed_value": 0.2982,
+            "unit": "mg/L NH3-N",
+            "status": "danger",
+            "threshold_description": "safe: below 0.05 mg/L NH3-N; watch: 0.05 to below 0.2 mg/L NH3-N; danger: 0.2 mg/L NH3-N or above",
+            "explanation": "Un-ionised ammonia (derived from TAN, pH and temperature) of 0.2982 mg/L NH3-N falls in the 'danger' band. Derived from TAN 1.2 mg/L at pH 8.6 and 30.5 °C (Emerson et al., 1975); 24.85% of TAN is un-ionised under these conditions.",
+            "source": "Demonstration setting — informed by general warm-water aquaculture guidance; not validated"
+          },
+          {
+            "rule_id": "symptom_reduced_feeding",
+            "parameter": "symptom",
+            "observed_value": "reduced_feeding",
+            "unit": null,
+            "status": "watch",
+            "threshold_description": "reported symptom → watch",
+            "explanation": "Reduced feeding is an early, non-specific stress sign.",
+            "source": "Demonstration symptom rule; not a diagnosis"
+          }
+        ],
+        "missing_parameters": [],
+        "next_steps": [
+          "Run aerators or add fresh, well-oxygenated water if available, and stop feeding until fish recover.",
+          "Reduce or pause feeding and re-test ammonia/nitrite within 24 hours; consider a partial water exchange.",
+          "Record which fish show signs and how many, take clear photos, and contact a fisheries officer. Do not start medication without professional advice.",
+          "Treat this as urgent: check the pond again within a few hours."
+        ],
+        "referral": "This check is not a diagnosis. For suspected disease, unusual mortality or any medication or chemical treatment, consult a qualified fisheries officer (e.g. the local Department of Fisheries office or a Krishi Vigyan Kendra fisheries specialist) before acting.",
+        "threshold_profile": {
+          "id": "generic_warm_water_demo_v1",
+          "label": "Generic warm-water pond aquaculture — demonstration settings",
+          "status": "demonstration_settings",
+          "validated": false,
+          "applies_to": "Warm-water freshwater finfish ponds (e.g. Indian major carps, tilapia, pangasius). Not tuned for shrimp, brackish water, hatcheries or any specific species.",
+          "notes": "Bands are informed by commonly cited general ranges in warm-water pond aquaculture literature (e.g. Boyd, C.E., Water Quality in Ponds for Aquaculture, 1990). The exact numbers in this file have NOT been checked against a specific published table for any species or for coastal Karnataka conditions. A qualified fisheries professional must review them before any real use."
+        },
+        "alert_id": "alert_5589b52e1504",
+        "is_demo_record": false,
+        "disclaimer": "Demonstration rules engine. Thresholds are unvalidated demonstration settings for generic warm-water ponds and do not diagnose disease."
+      },
+      "meta": {
+        "generated_at": "2026-10-01T05:00:00Z",
+        "demo_mode": true,
+        "api_version": "v1"
+      }
+    }
+  }
+}

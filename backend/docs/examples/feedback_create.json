@@ -1,0 +1,51 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/ponds/pond_demo_003/feedback",
+    "body": {
+      "forecast_id": "fc_d85845f1213f",
+      "observation": "no_stress_seen",
+      "observed_at": "2026-10-01T06:10:00+05:30",
+      "aerator_used": true
+    }
+  },
+  "response": {
+    "status": 201,
+    "body": {
+      "data": {
+        "event": {
+          "id": "fb_2aaf0a387e1c",
+          "pond_id": "pond_demo_003",
+          "forecast_id": "fc_d85845f1213f",
+          "forecast_status": "safe",
+          "forecast_peak_risk_index": 11.9,
+          "observation": "no_stress_seen",
+          "observed_at": "2026-10-01T06:10:00+05:30",
+          "aerator_used": true,
+          "note": null,
+          "created_at": "2026-10-01T05:00:00Z",
+          "previous_demand_multiplier": 1.0,
+          "updated_demand_multiplier": 1.0,
+          "delta": 0.0,
+          "rule_applied": "confounded_by_aeration",
+          "explanation": "Aerators ran overnight, so the outcome does not show the pond's natural oxygen demand; no change."
+        },
+        "calibration": {
+          "pond_id": "pond_demo_003",
+          "demand_multiplier": 1.0,
+          "min_multiplier": 0.8,
+          "max_multiplier": 1.25,
+          "feedback_count": 1,
+          "updated_at": "2026-10-01T05:00:00Z",
+          "method": "Bounded step adjustment of a per-pond demand multiplier (0.8-1.25). Stress observed after a safe/watch forecast nudges it up (+0.05/+0.03); no stress after a watch/danger forecast nudges it down (-0.01/-0.02). Nights with aerators running, or not checked, cause no change.",
+          "limitations": "Farmer observations are qualitative and do not measure dissolved oxygen. This demo adjustment is not statistical calibration, is not validated, and never retrains any model automatically."
+        }
+      },
+      "meta": {
+        "generated_at": "2026-10-01T05:00:00Z",
+        "demo_mode": true,
+        "api_version": "v1"
+      }
+    }
+  }
+}

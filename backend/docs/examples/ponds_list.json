@@ -1,0 +1,103 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/v1/ponds?limit=2",
+    "body": null
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "data": [
+        {
+          "id": "pond_demo_001",
+          "name": "Demo Pond A1 (carp)",
+          "farmer_name": "Demo Farmer 01",
+          "contact_phone_masked": "•••••• 0001",
+          "district": "Udupi",
+          "village_cluster": "Demo Cluster Brahmavar",
+          "area_m2": 2000.0,
+          "depth_m": 1.4,
+          "species": "indian_major_carp_polyculture",
+          "water_type": "freshwater",
+          "stocking_date": "2026-06-15",
+          "stocked_count": 4000,
+          "estimated_biomass_kg": 1800.0,
+          "has_aerator": true,
+          "aerator_count": 1,
+          "preferred_language": "kn",
+          "alert_channels": [
+            "whatsapp",
+            "sms"
+          ],
+          "is_demo_record": true,
+          "created_at": "2026-09-01T04:30:00Z",
+          "updated_at": "2026-09-01T04:30:00Z",
+          "latest_status": {
+            "forecast_status": "watch",
+            "forecast_id": "fc_demo_002",
+            "forecast_generated_at": "2026-10-01T02:30:00Z",
+            "forecast_peak_risk_index": 53.9,
+            "water_status": "safe",
+            "water_check_id": "wc_demo_001",
+            "water_checked_at": "2026-09-30T23:30:00Z",
+            "overall_status": "watch"
+          },
+          "calibration": {
+            "demand_multiplier": 1.03,
+            "feedback_count": 1
+          }
+        },
+        {
+          "id": "pond_demo_002",
+          "name": "Demo Pond A2 (tilapia)",
+          "farmer_name": "Demo Farmer 02",
+          "contact_phone_masked": "•••••• 0002",
+          "district": "Udupi",
+          "village_cluster": "Demo Cluster Brahmavar",
+          "area_m2": 1200.0,
+          "depth_m": 1.2,
+          "species": "tilapia",
+          "water_type": "freshwater",
+          "stocking_date": "2026-07-01",
+          "stocked_count": 5000,
+          "estimated_biomass_kg": 1100.0,
+          "has_aerator": false,
+          "aerator_count": 0,
+          "preferred_language": "kn",
+          "alert_channels": [
+            "whatsapp",
+            "sms",
+            "voice"
+          ],
+          "is_demo_record": true,
+          "created_at": "2026-09-01T04:30:00Z",
+          "updated_at": "2026-09-01T04:30:00Z",
+          "latest_status": {
+            "forecast_status": "danger",
+            "forecast_id": "fc_demo_003",
+            "forecast_generated_at": "2026-10-01T02:30:00Z",
+            "forecast_peak_risk_index": 100.0,
+            "water_status": "danger",
+            "water_check_id": "wc_demo_002",
+            "water_checked_at": "2026-09-30T23:30:00Z",
+            "overall_status": "danger"
+          },
+          "calibration": {
+            "demand_multiplier": 1.0,
+            "feedback_count": 0
+          }
+        }
+      ],
+      "meta": {
+        "generated_at": "2026-10-01T05:00:00Z",
+        "demo_mode": true,
+        "api_version": "v1",
+        "pagination": {
+          "total": 6,
+          "limit": 2,
+          "offset": 0
+        }
+      }
+    }
+  }
+}
