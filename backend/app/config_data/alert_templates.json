@@ -1,0 +1,64 @@
+{
+  "review_status": "unreviewed_draft",
+  "review_note": "Kannada text is an unreviewed draft. It must be reviewed by a competent Kannada speaker familiar with local fishing vocabulary before any production use.",
+  "status_labels": {
+    "safe": {"en": "Safe", "kn": "ಸುರಕ್ಷಿತ"},
+    "watch": {"en": "Watch", "kn": "ಗಮನಿಸಿ"},
+    "danger": {"en": "Danger", "kn": "ಅಪಾಯ"}
+  },
+  "parameter_labels": {
+    "ph": {"en": "pH", "kn": "pH"},
+    "water_temp_c": {"en": "water temperature", "kn": "ನೀರಿನ ತಾಪಮಾನ"},
+    "dissolved_oxygen_mg_l": {"en": "dissolved oxygen", "kn": "ಕರಗಿದ ಆಮ್ಲಜನಕ"},
+    "unionized_ammonia_mg_l": {"en": "ammonia", "kn": "ಅಮೋನಿಯಾ"},
+    "total_ammonia_mg_l": {"en": "ammonia", "kn": "ಅಮೋನಿಯಾ"},
+    "nitrite_mg_l": {"en": "nitrite", "kn": "ನೈಟ್ರೈಟ್"},
+    "symptom": {"en": "fish symptoms", "kn": "ಮೀನಿನ ಲಕ್ಷಣಗಳು"}
+  },
+  "templates": {
+    "forecast_danger": {
+      "title": {
+        "en": "High overnight oxygen risk (demo)",
+        "kn": "ರಾತ್ರಿ ಆಮ್ಲಜನಕ ಕೊರತೆಯ ಹೆಚ್ಚಿನ ಅಪಾಯ (ಡೆಮೊ)"
+      },
+      "message": {
+        "en": "MeenMitra DEMO alert: the simulated overnight oxygen-risk index for {pond_name} is HIGH (highest around {peak_time}). If available, run aerators tonight and reduce evening feed. Check fish at dawn. If fish gasp at the surface or die, contact your fisheries officer. This is a demo estimate, not a measurement.",
+        "kn": "ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಎಚ್ಚರಿಕೆ: {pond_name} ಕೊಳದಲ್ಲಿ ಇಂದು ರಾತ್ರಿ ಆಮ್ಲಜನಕ ಕೊರತೆಯ ಅಂದಾಜು ಅಪಾಯ ಹೆಚ್ಚಾಗಿದೆ (ಸುಮಾರು {peak_time} ಸಮಯಕ್ಕೆ ಗರಿಷ್ಠ). ಸಾಧ್ಯವಾದರೆ ಇಂದು ರಾತ್ರಿ ಏರೇಟರ್ ಚಾಲನೆ ಮಾಡಿ ಮತ್ತು ಸಂಜೆಯ ಆಹಾರ ಕಡಿಮೆ ಮಾಡಿ. ಬೆಳಗಿನ ಜಾವ ಮೀನುಗಳನ್ನು ಪರಿಶೀಲಿಸಿ. ಮೀನುಗಳು ನೀರಿನ ಮೇಲ್ಮೈಯಲ್ಲಿ ಉಸಿರಾಡಲು ಒದ್ದಾಡುತ್ತಿದ್ದರೆ ಅಥವಾ ಸಾಯುತ್ತಿದ್ದರೆ ಮೀನುಗಾರಿಕೆ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ. ಇದು ಡೆಮೊ ಅಂದಾಜು, ನಿಜವಾದ ಅಳತೆ ಅಲ್ಲ."
+      },
+      "voice_intro": {"en": "This is a MeenMitra demo call.", "kn": "ಇದು ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಕರೆ."}
+    },
+    "forecast_watch": {
+      "title": {
+        "en": "Overnight oxygen risk: watch (demo)",
+        "kn": "ರಾತ್ರಿ ಆಮ್ಲಜನಕ ಅಪಾಯ – ಗಮನಿಸಿ (ಡೆಮೊ)"
+      },
+      "message": {
+        "en": "MeenMitra DEMO notice: the simulated overnight oxygen-risk index for {pond_name} is MODERATE (highest around {peak_time}). Keep aerators ready, avoid overfeeding this evening and check fish at dawn. This is a demo estimate, not a measurement.",
+        "kn": "ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಸೂಚನೆ: {pond_name} ಕೊಳದಲ್ಲಿ ಇಂದು ರಾತ್ರಿ ಆಮ್ಲಜನಕ ಕೊರತೆಯ ಅಂದಾಜು ಅಪಾಯ ಮಧ್ಯಮ ಮಟ್ಟದಲ್ಲಿದೆ (ಸುಮಾರು {peak_time} ಸಮಯಕ್ಕೆ ಗರಿಷ್ಠ). ಏರೇಟರ್ ಸಿದ್ಧವಾಗಿಡಿ, ಸಂಜೆ ಹೆಚ್ಚು ಆಹಾರ ನೀಡಬೇಡಿ ಮತ್ತು ಬೆಳಗಿನ ಜಾವ ಮೀನುಗಳನ್ನು ಪರಿಶೀಲಿಸಿ. ಇದು ಡೆಮೊ ಅಂದಾಜು, ನಿಜವಾದ ಅಳತೆ ಅಲ್ಲ."
+      },
+      "voice_intro": {"en": "This is a MeenMitra demo call.", "kn": "ಇದು ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಕರೆ."}
+    },
+    "water_check_danger": {
+      "title": {
+        "en": "Water check: danger (demo)",
+        "kn": "ನೀರಿನ ಪರಿಶೀಲನೆ: ಅಪಾಯ (ಡೆಮೊ)"
+      },
+      "message": {
+        "en": "MeenMitra DEMO alert: the water check for {pond_name} flagged DANGER ({reasons}). Follow the suggested steps and contact your fisheries officer before using any medicine or chemical. This is not a diagnosis.",
+        "kn": "ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಎಚ್ಚರಿಕೆ: {pond_name} ಕೊಳದ ನೀರಿನ ಪರಿಶೀಲನೆಯಲ್ಲಿ ಅಪಾಯದ ಸೂಚನೆ ಕಂಡುಬಂದಿದೆ ({reasons}). ಸೂಚಿಸಿದ ಕ್ರಮಗಳನ್ನು ಅನುಸರಿಸಿ. ಯಾವುದೇ ಔಷಧಿ ಅಥವಾ ರಾಸಾಯನಿಕ ಬಳಸುವ ಮೊದಲು ಮೀನುಗಾರಿಕೆ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ. ಇದು ರೋಗನಿರ್ಣಯವಲ್ಲ."
+      },
+      "voice_intro": {"en": "This is a MeenMitra demo call.", "kn": "ಇದು ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಕರೆ."}
+    },
+    "water_check_watch": {
+      "title": {
+        "en": "Water check: watch (demo)",
+        "kn": "ನೀರಿನ ಪರಿಶೀಲನೆ: ಗಮನಿಸಿ (ಡೆಮೊ)"
+      },
+      "message": {
+        "en": "MeenMitra DEMO notice: the water check for {pond_name} needs attention ({reasons}). Re-test soon and follow the suggested steps. This is not a diagnosis.",
+        "kn": "ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಸೂಚನೆ: {pond_name} ಕೊಳದ ನೀರಿನ ಪರಿಶೀಲನೆಯಲ್ಲಿ ಗಮನಿಸಬೇಕಾದ ಅಂಶಗಳಿವೆ ({reasons}). ಶೀಘ್ರದಲ್ಲೇ ಮತ್ತೆ ಪರೀಕ್ಷಿಸಿ ಮತ್ತು ಸೂಚಿಸಿದ ಕ್ರಮಗಳನ್ನು ಅನುಸರಿಸಿ. ಇದು ರೋಗನಿರ್ಣಯವಲ್ಲ."
+      },
+      "voice_intro": {"en": "This is a MeenMitra demo call.", "kn": "ಇದು ಮೀನ್‌ಮಿತ್ರ ಡೆಮೊ ಕರೆ."}
+    }
+  }
+}
