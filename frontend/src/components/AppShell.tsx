@@ -13,6 +13,7 @@ const NAV: { group: string; items: { href: string; label: string; icon: IconName
     items: [
       { href: "/", label: "Dashboard", icon: "dashboard" },
       { href: "/ponds", label: "Ponds", icon: "pond" },
+      { href: "/farmer", label: "Farmer view", icon: "fish" },
     ],
   },
   {
@@ -209,6 +210,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       (prev ?? trigger)?.focus();
     };
   }, [open]);
+
+  // The farmer screen is a standalone, phone-first app with its own simple header.
+  if (pathname === "/farmer" || pathname?.startsWith("/farmer/")) return <>{children}</>;
 
   return (
     <div className="shell">
