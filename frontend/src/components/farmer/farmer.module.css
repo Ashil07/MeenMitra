@@ -189,6 +189,10 @@
   font-weight: 800;
   cursor: pointer;
 }
+.noVoice {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
 .speak[aria-pressed="true"] {
   background: var(--ink);
   color: #fff;

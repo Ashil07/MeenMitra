@@ -19,8 +19,9 @@ function useVoicesVersion(): number {
   return useSyncExternalStore(
     (onChange) => {
       if (!supported()) return () => {};
-      window.speechSynthesis.addEventListener("voiceschanged", onChange);
-      return () => window.speechSynthesis.removeEventListener("voiceschanged", onChange);
+      const synth = window.speechSynthesis;
+      synth.addEventListener("voiceschanged", onChange);
+      return () => synth.removeEventListener("voiceschanged", onChange);
     },
     () => (supported() ? window.speechSynthesis.getVoices().length : 0),
     () => 0,
@@ -28,12 +29,12 @@ function useVoicesVersion(): number {
 }
 
 /**
- * Reads `text` aloud with the phone's own text-to-speech. Rendered only when the device has a
- * voice for the chosen language. Many phones have no Kannada voice, and a button that cannot
- * speak would be misleading.
+ * Reads `text` aloud with the device's own text-to-speech. The button appears only when the device
+ * has a voice for the chosen language (many Windows PCs and phones have no Kannada voice); otherwise
+ * a short note says read-aloud is unavailable, so the feature never looks silently broken.
  */
 export function SpeakButton({ text, lang }: { text: string; lang: Lang }) {
-  useVoicesVersion();
+  const voiceCount = useVoicesVersion();
   const voice = findVoice(lang);
   const [speaking, setSpeaking] = useState(false);
 
@@ -41,7 +42,15 @@ export function SpeakButton({ text, lang }: { text: string; lang: Lang }) {
     if (supported()) window.speechSynthesis.cancel();
   }, []);
 
-  if (!voice) return null;
+  if (!voice) {
+    // While the voice list is still loading (count 0), show nothing rather than a false "unavailable".
+    if (supported() && voiceCount === 0) return null;
+    return (
+      <p className={styles.noVoice} role="note">
+        {UI.noVoice[lang]}
+      </p>
+    );
+  }
 
   function toggle() {
     const synth = window.speechSynthesis;

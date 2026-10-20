@@ -32,6 +32,10 @@ export const UI = {
   estimateNote: { kn: "ಇದು ಅಂದಾಜು ಮಾತ್ರ, ನಿಜವಾದ ಅಳತೆ ಅಲ್ಲ.", en: "This is an estimate, not a measurement." },
   listen: { kn: "ಕೇಳಿ", en: "Listen" },
   stop: { kn: "ನಿಲ್ಲಿಸಿ", en: "Stop" },
+  noVoice: {
+    kn: "ಈ ಸಾಧನದಲ್ಲಿ ಕನ್ನಡ ಧ್ವನಿ ಇಲ್ಲ, ಆದ್ದರಿಂದ ಓದಿ ಹೇಳುವ ಸೌಲಭ್ಯ ಲಭ್ಯವಿಲ್ಲ.",
+    en: "Read-aloud is not available: this device has no English voice.",
+  },
 
   todoTitle: { kn: "ಇಂದು ರಾತ್ರಿ ಏನು ಮಾಡಬೇಕು", en: "What to do tonight" },
   todoTitleUnknown: { kn: "ಏನು ಮಾಡಬೇಕು", en: "What to do" },

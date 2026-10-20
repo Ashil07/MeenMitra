@@ -118,10 +118,51 @@ describe("FarmerHome", () => {
     expect(screen.queryByRole("heading", { name: UI.messageTitle.kn })).not.toBeInTheDocument();
   });
 
-  it("does not offer a Listen button when the device cannot speak", async () => {
+  it("explains that read-aloud is unavailable when the device cannot speak", async () => {
     renderPond();
     await screen.findByRole("heading", { level: 1 });
     expect(screen.queryByRole("button", { name: UI.listen.kn })).not.toBeInTheDocument();
+    expect(screen.getByText(UI.noVoice.kn)).toBeInTheDocument();
+  });
+
+  it("uses only a matching voice: note in Kannada, working button in English", async () => {
+    const speak = vi.fn();
+    const englishOnly = [{ name: "Microsoft Heera", lang: "en-IN", localService: true, default: true, voiceURI: "heera" }];
+    vi.stubGlobal("speechSynthesis", {
+      getVoices: () => englishOnly,
+      speak,
+      cancel: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    });
+    vi.stubGlobal(
+      "SpeechSynthesisUtterance",
+      class {
+        text: string;
+        lang = "";
+        voice: unknown = null;
+        rate = 1;
+        onend: (() => void) | null = null;
+        onerror: (() => void) | null = null;
+        constructor(text: string) {
+          this.text = text;
+        }
+      },
+    );
+    try {
+      renderPond();
+      await screen.findByRole("heading", { level: 1 });
+      expect(screen.getByText(UI.noVoice.kn)).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole("button", { name: UI.switchToLabel.kn }));
+      const listen = await screen.findByRole("button", { name: UI.listen.en });
+      await userEvent.click(listen);
+      expect(speak).toHaveBeenCalledTimes(1);
+      expect(speak.mock.calls[0][0].lang).toBe("en-IN");
+      expect(speak.mock.calls[0][0].text).toMatch(/Danger|Be careful|Safe|No check yet/);
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it("shows a clear message for an unknown pond", async () => {
