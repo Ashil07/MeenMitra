@@ -4,7 +4,9 @@ import Link from "next/link";
 import { api } from "@/api";
 import type { PondSummary } from "@/api/types";
 import { Icon } from "@/components/Icon";
+import { OutbreakMap } from "@/components/OutbreakMap";
 import { PageHeader } from "@/components/PageHeader";
+import { PilotMetrics } from "@/components/PilotMetrics";
 import { RISK_COLOR, RISK_LABEL, RiskBadge } from "@/components/RiskBadge";
 import { RiskDistribution } from "@/components/RiskCharts";
 import { EmptyState, ErrorState, LoadingState, Notice } from "@/components/States";
@@ -15,6 +17,11 @@ import { useApiQuery } from "@/lib/useApi";
 
 export default function CooperativePage() {
   const q = useApiQuery(() => api.getCooperative(), []);
+  const alerts = useApiQuery(() => api.listAlerts(), []);
+  const reload = () => {
+    q.reload();
+    alerts.reload();
+  };
 
   return (
     <>
@@ -23,7 +30,7 @@ export default function CooperativePage() {
         title="Cooperative dashboard"
         sub="Every member pond's status, grouped by shared canal, so aerators and officer visits go where the risk is highest tonight."
         actions={
-          <button type="button" className="btn" onClick={q.reload} disabled={q.loading}>
+          <button type="button" className="btn" onClick={reload} disabled={q.loading}>
             <Icon name="refresh" /> Refresh
           </button>
         }
@@ -84,6 +91,41 @@ export default function CooperativePage() {
                 <h2 id="dist-h">Risk distribution</h2>
               </div>
               <RiskDistribution counts={q.data.counts} />
+            </section>
+          </div>
+
+          <div className="grid grid-2">
+            <section className="card" aria-labelledby="map-h">
+              <div className="card-head">
+                <div>
+                  <h2 id="map-h">Outbreak map</h2>
+                  <p>Every member pond tonight. Red dashed canals have possible disease reports or outbreak notices.</p>
+                </div>
+              </div>
+              <OutbreakMap
+                canals={q.data.canals}
+                clusters={q.data.clusters}
+                notices={(alerts.data ?? []).filter((a) => a.kind === "outbreak_notice")}
+              />
+            </section>
+            <section className="card" aria-labelledby="pilot-h">
+              <div className="card-head">
+                <div>
+                  <h2 id="pilot-h">Pilot metrics</h2>
+                  <p>What we will track in the pilot, computed from the alerts on record.</p>
+                </div>
+                {q.data.data_source === "demo" && <span className="tag demo">Demo data</span>}
+              </div>
+              {alerts.error ? (
+                <ErrorState error={alerts.error} onRetry={alerts.reload} title="Could not load alerts" />
+              ) : alerts.data ? (
+                <PilotMetrics alerts={alerts.data} demo={q.data.data_source === "demo"} />
+              ) : (
+                <LoadingState rows={2} />
+              )}
+              <p className="small muted" style={{ marginTop: 12 }}>
+                Fish-kill events per pond and feed saved per crop cycle need field records from the pilot, so they are not shown here.
+              </p>
             </section>
           </div>
 

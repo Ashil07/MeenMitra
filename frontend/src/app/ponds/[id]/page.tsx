@@ -7,6 +7,7 @@ import { api } from "@/api";
 import type { Pond } from "@/api/types";
 import { AlertRow } from "@/components/AlertRow";
 import { FeedbackPanel } from "@/components/FeedbackPanel";
+import { GrowthCurve } from "@/components/GrowthCurve";
 import { ForecastExplorer } from "@/components/ForecastExplorer";
 import { Icon } from "@/components/Icon";
 import { PageHeader } from "@/components/PageHeader";
@@ -190,6 +191,14 @@ function Overview({ pond: p, onGo }: { pond: Pond; onGo: (t: TabId) => void }) {
             </div>
           </div>
         </section>
+        {p.stocking_date && (
+          <section className="card" aria-labelledby="growth-h">
+            <h2 id="growth-h" style={{ marginBottom: 10 }}>
+              Fish growth
+            </h2>
+            <GrowthCurve species={p.species} stockingDate={p.stocking_date} fishCount={p.fish_count} />
+          </section>
+        )}
         <section className="card tint" aria-labelledby="calib-h">
           <h3 id="calib-h" style={{ marginBottom: 8 }}>
             Per-pond learning

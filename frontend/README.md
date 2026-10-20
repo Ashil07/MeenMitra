@@ -52,12 +52,13 @@ The contract the frontend expects is in [API_CONTRACT.md](API_CONTRACT.md). It i
 
 | Route | What it shows |
 |---|---|
-| `/` | Dashboard: pond counts, needs-attention list, featured forecast curve, risk distribution, trend, latest alerts |
-| `/ponds`, `/ponds/new`, `/ponds/[id]`, `/ponds/[id]/edit` | Pond list with search and filters, registration, detail tabs (overview, forecast, water checks, alerts, 7 AM check-in), editing |
-| `/forecast` | Forecast explorer: scenario selector, weather sliders, feeding toggle, rerun, hourly curve with table, factors, suggested actions, alert preview |
+| `/` | Dashboard: pond counts, **5 PM nightly run** (forecast every pond with live Open-Meteo weather or a scenario, draft alerts for Watch/Danger, total fish value at risk), needs-attention list, featured forecast curve, risk distribution, trend, latest alerts |
+| `/ponds`, `/ponds/new`, `/ponds/[id]`, `/ponds/[id]/edit` | Pond list with search and filters, registration, detail tabs (overview with a demo growth curve and fish value, forecast, water checks, alerts, 7 AM check-in), editing |
+| `/forecast` | Forecast explorer: live Open-Meteo weather for the pond's village or a scenario with weather sliders, feeding toggle, rerun, hourly curve with table, factors, fish value at risk, suggested actions, alert preview |
 | `/water-check` | pH, temperature, ammonia and nitrite readings plus symptoms; rules result with next steps and the fisheries-officer warning |
 | `/alerts` | Alert centre: Kannada and English preview, WhatsApp/SMS/voice selection, simulated send (including a simulated failure), delivery timeline, farmer reply, filters |
-| `/cooperative` | Priority list, risk distribution, possible outbreak clusters, ponds grouped by canal (schematic, not a map), anonymised reports |
+| `/cooperative` | Priority list, risk distribution, schematic outbreak map (approximate village locations), pilot metrics (alerts delivered and acted on, outbreak notices), possible outbreak clusters, ponds grouped by canal, anonymised reports |
+| `/farmer`, `/farmer/[id]` | Kannada-first farmer screen (no console chrome): traffic-light status, up to three pictured steps, read-aloud where the device has a voice, one-tap 7 AM check-in, reply to delivered messages, picture-tile problem report that warns canal neighbours anonymously |
 | `/approach` | Interactive 9-layer pipeline, with status per layer taken from `/ml/status` |
 | `/models` | Datasets, provenance, load status, record counts, schema, training status and metrics, exactly as reported by the backend |
 

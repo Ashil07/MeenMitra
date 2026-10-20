@@ -6,6 +6,7 @@ import type { Forecast } from "@/api/types";
 import { AlertRow } from "@/components/AlertRow";
 import { ForecastChart } from "@/components/ForecastChart";
 import { Icon } from "@/components/Icon";
+import { NightlyRun } from "@/components/NightlyRun";
 import { PageHeader } from "@/components/PageHeader";
 import { RiskBadge } from "@/components/RiskBadge";
 import { RiskDistribution, RiskTrend } from "@/components/RiskCharts";
@@ -77,6 +78,8 @@ export default function DashboardPage() {
               </div>
             ))}
           </section>
+
+          <NightlyRun onDone={q.reload} />
 
           <div className="grid grid-main">
             <section className="card" aria-labelledby="featured-h">
