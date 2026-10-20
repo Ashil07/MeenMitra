@@ -3,6 +3,7 @@
 import { api } from "@/api";
 import type { DatasetInfo, ModelInfoStatus } from "@/api/types";
 import { Icon } from "@/components/Icon";
+import { ModelResults } from "@/components/ModelResults";
 import { PageHeader } from "@/components/PageHeader";
 import { EmptyState, ErrorState, LoadingState, Notice } from "@/components/States";
 import { SourceTag } from "@/components/Tags";
@@ -50,8 +51,9 @@ export default function ModelsPage() {
             <SourceTag source={q.data.data_source} /> Reported {formatDateTime(q.data.generated_at)}
           </div>
           {q.data.data_source === "demo" && (
-            <Notice tone="warn" title="Demo status.">
-              In demo mode this page shows the planned datasets and models only. It deliberately reports nothing as downloaded or trained. Connect the backend for actual status.
+            <Notice tone="info" title="Results from the backend's last training run.">
+              In demo mode these numbers and predictions are exported from the backend&apos;s saved models (backend/scripts/export_demo_ml.py), which re-scores each model on
+              its test data first. Models trained on simulated data are labelled.
             </Notice>
           )}
 
@@ -62,7 +64,7 @@ export default function ModelsPage() {
                 <EmptyState icon="model" title="No models reported" />
               </div>
             ) : (
-              <div className="grid grid-2">
+              <div className="stack" style={{ gap: 14 }}>
                 {q.data.models.map((m) => (
                   <ModelCard key={m.id} model={m} />
                 ))}
@@ -115,6 +117,12 @@ function ModelCard({ model: m }: { model: ModelInfoStatus }) {
         <dd>{m.validated_for_karnataka_ponds ? "Yes" : "No"}</dd>
         <dt>Datasets</dt>
         <dd className="mono">{m.dataset_ids.join(", ") || "—"}</dd>
+        {m.data_origin && (
+          <>
+            <dt>Training data</dt>
+            <dd>{m.data_origin === "external" ? "Real external dataset" : "Simulated (demo data)"}</dd>
+          </>
+        )}
       </dl>
 
       <h4 className="small" style={{ margin: "16px 0 8px", fontWeight: 800 }}>
@@ -150,6 +158,15 @@ function ModelCard({ model: m }: { model: ModelInfoStatus }) {
         </div>
       )}
 
+      {m.results && (
+        <>
+          <h4 className="small" style={{ margin: "16px 0 8px", fontWeight: 800 }}>
+            Test results
+          </h4>
+          <ModelResults results={m.results} />
+        </>
+      )}
+
       {m.limitations.length > 0 && (
         <>
           <h4 className="small" style={{ margin: "16px 0 8px", fontWeight: 800 }}>
@@ -181,9 +198,13 @@ function DatasetCard({ ds: d }: { ds: DatasetInfo }) {
       <dl className="kv small" style={{ marginTop: 12 }}>
         <dt>Source</dt>
         <dd>
-          <a href={d.source_url} target="_blank" rel="noreferrer noopener">
-            {d.source_url.replace(/^https?:\/\//, "")}
-          </a>
+          {/^https?:\/\//.test(d.source_url) ? (
+            <a href={d.source_url} target="_blank" rel="noreferrer noopener">
+              {d.source_url.replace(/^https?:\/\//, "")}
+            </a>
+          ) : (
+            <span className="mono">{d.source_url}</span>
+          )}
         </dd>
         <dt>Licence</dt>
         <dd>{d.license ?? "Check source"}</dd>

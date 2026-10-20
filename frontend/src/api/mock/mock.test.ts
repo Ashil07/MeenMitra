@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { ApiError } from "../errors";
 import type { PondInput } from "../types";
 import { createMockApi } from "./index";
+import ML from "./ml_results.json";
 
 const NOW = new Date("2026-10-19T11:30:00Z"); // 5:00 PM IST
 
@@ -173,11 +174,18 @@ describe("mock API — feedback, cooperative, ML status", () => {
     expect(coop.recent_reports.every((r) => !("farmer_name" in r))).toBe(true);
   });
 
-  it("reports no invented record counts or metrics in demo ML status", async () => {
+  it("reports demo ML status exactly as exported from the backend's training runs", async () => {
     const s = await api.getMlStatus();
-    expect(s.datasets.every((d) => d.record_count === null && d.status === "not_downloaded")).toBe(true);
-    expect(s.models.every((m) => m.metrics.length === 0 && m.training_status === "not_started" && !m.validated_for_karnataka_ponds)).toBe(true);
-    const ml = s.engine_layers.find((l) => l.id === "ml");
-    expect(ml?.status).toBe("planned");
+    const wq = s.models.find((m) => m.id === "mendeley_wq")!;
+    const ox = s.models.find((m) => m.id === "synthetic_do")!;
+    expect(wq.metrics.find((m) => m.name === "Accuracy")?.value).toBe(Math.round(ML.water_quality.accuracy * 1000) / 10);
+    expect(wq.results?.samples).toEqual(ML.water_quality.samples);
+    expect(wq.data_origin).toBe("external");
+    expect(ox.data_origin).toBe("synthetic");
+    expect(ox.results?.series?.points.map((p) => p.predicted)).toEqual(ML.oxygen.series.map((p) => p.predicted));
+    expect(s.datasets.find((d) => d.id === "mendeley_wq")?.record_count).toBe(ML.water_quality.rows);
+    // Datasets that were never loaded report no counts; no model claims field validation or forecast use.
+    expect(s.datasets.filter((d) => d.status === "not_downloaded").every((d) => d.record_count === null)).toBe(true);
+    expect(s.models.every((m) => !m.validated_for_karnataka_ponds && !m.used_in_forecast)).toBe(true);
   });
 });

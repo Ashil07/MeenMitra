@@ -1,0 +1,402 @@
+{
+  "water_quality": {
+    "trained_at": "2026-10-19T14:50:51+00:00",
+    "rows": 4300,
+    "n_train": 3225,
+    "n_test": 1075,
+    "features": [
+      "temperature",
+      "turbidity",
+      "dissolved_oxygen",
+      "bod",
+      "co2",
+      "ph",
+      "alkalinity",
+      "hardness",
+      "calcium",
+      "ammonia",
+      "nitrite",
+      "phosphorus",
+      "h2s",
+      "plankton"
+    ],
+    "split": "stratified random 75/25 split (rows are independent samples; no time or group structure documented)",
+    "model_type": "random_forest",
+    "accuracy": 0.9944,
+    "macro_f1": 0.9945,
+    "compare": {
+      "logistic_regression": {
+        "accuracy": 0.8158,
+        "macro_f1": 0.8096
+      }
+    },
+    "baseline": {
+      "accuracy": 0.3488,
+      "macro_f1": 0.1724
+    },
+    "confusion_matrix": {
+      "labels": [
+        "0",
+        "1",
+        "2"
+      ],
+      "matrix": [
+        [
+          350,
+          0,
+          0
+        ],
+        [
+          0,
+          349,
+          1
+        ],
+        [
+          2,
+          3,
+          370
+        ]
+      ]
+    },
+    "samples": [
+      {
+        "inputs": {
+          "dissolved_oxygen": 3.37,
+          "ph": 8.69,
+          "ammonia": 0.02,
+          "temperature": 26.94,
+          "turbidity": 52.75
+        },
+        "actual": "excellent",
+        "predicted": "excellent",
+        "confidence": 1.0
+      },
+      {
+        "inputs": {
+          "dissolved_oxygen": 4.12,
+          "ph": 8.69,
+          "ammonia": 0.02,
+          "temperature": 27.51,
+          "turbidity": 40.37
+        },
+        "actual": "excellent",
+        "predicted": "excellent",
+        "confidence": 1.0
+      },
+      {
+        "inputs": {
+          "dissolved_oxygen": 7.02,
+          "ph": 9.36,
+          "ammonia": 0.04,
+          "temperature": 15.51,
+          "turbidity": 21.02
+        },
+        "actual": "good",
+        "predicted": "good",
+        "confidence": 1.0
+      },
+      {
+        "inputs": {
+          "dissolved_oxygen": 6.47,
+          "ph": 9.18,
+          "ammonia": 0.04,
+          "temperature": 30.81,
+          "turbidity": 24.18
+        },
+        "actual": "good",
+        "predicted": "good",
+        "confidence": 0.99
+      },
+      {
+        "inputs": {
+          "dissolved_oxygen": 0.71,
+          "ph": 6.75,
+          "ammonia": 0.0,
+          "temperature": 26.87,
+          "turbidity": 49.63
+        },
+        "actual": "poor",
+        "predicted": "poor",
+        "confidence": 0.77
+      },
+      {
+        "inputs": {
+          "dissolved_oxygen": 7.28,
+          "ph": 6.03,
+          "ammonia": 0.03,
+          "temperature": 32.06,
+          "turbidity": 25.77
+        },
+        "actual": "poor",
+        "predicted": "poor",
+        "confidence": 1.0
+      }
+    ],
+    "warnings": [
+      "Labels appear to be derived from feature thresholds; high scores reflect recovering those rules, not validated field performance.",
+      "Classification of water-quality grade only; not used for oxygen forecasting.",
+      "Values outside pond-plausible ranges (% of rows): ph 2.98%, temperature 3.44%. The data looks generated within ranges rather than measured in ponds."
+    ]
+  },
+  "oxygen": {
+    "trained_at": "2026-10-19T14:42:00+00:00",
+    "rows": 3024,
+    "n_train": 2004,
+    "n_test": 1002,
+    "features": [
+      "do_t",
+      "do_lag1",
+      "do_lag2",
+      "do_delta_1h",
+      "temperature_c",
+      "ph",
+      "hour_sin",
+      "hour_cos",
+      "turbidity_ntu",
+      "ammonia_mg_l"
+    ],
+    "split": "group holdout by pond: test ponds ['synthetic_pond_05', 'synthetic_pond_06']",
+    "model_type": "ridge",
+    "mae_mg_l": 0.1427,
+    "rmse_mg_l": 0.1819,
+    "r2": 0.9854,
+    "skill_vs_persistence_mae": 0.6059,
+    "baseline": {
+      "mae_mg_l": 0.3621,
+      "rmse_mg_l": 0.4216,
+      "r2": 0.9217
+    },
+    "compare": {
+      "hist_gradient_boosting": {
+        "mae_mg_l": 0.1616,
+        "rmse_mg_l": 0.2052,
+        "r2": 0.9814,
+        "skill_vs_persistence_mae": 0.5537
+      }
+    },
+    "series_pond": "synthetic_pond_05",
+    "series": [
+      {
+        "hour": "2026-01-01T19:00:00+00:00",
+        "actual": 9.03,
+        "predicted": 8.85,
+        "persistence": 9.29
+      },
+      {
+        "hour": "2026-01-01T20:00:00+00:00",
+        "actual": 8.52,
+        "predicted": 8.49,
+        "persistence": 9.03
+      },
+      {
+        "hour": "2026-01-01T21:00:00+00:00",
+        "actual": 7.71,
+        "predicted": 7.95,
+        "persistence": 8.52
+      },
+      {
+        "hour": "2026-01-01T22:00:00+00:00",
+        "actual": 7.16,
+        "predicted": 7.11,
+        "persistence": 7.71
+      },
+      {
+        "hour": "2026-01-01T23:00:00+00:00",
+        "actual": 6.3,
+        "predicted": 6.58,
+        "persistence": 7.16
+      },
+      {
+        "hour": "2026-01-02T00:00:00+00:00",
+        "actual": 5.61,
+        "predicted": 5.8,
+        "persistence": 6.3
+      },
+      {
+        "hour": "2026-01-02T01:00:00+00:00",
+        "actual": 5.3,
+        "predicted": 5.19,
+        "persistence": 5.61
+      },
+      {
+        "hour": "2026-01-02T02:00:00+00:00",
+        "actual": 4.79,
+        "predicted": 5.01,
+        "persistence": 5.3
+      },
+      {
+        "hour": "2026-01-02T03:00:00+00:00",
+        "actual": 4.72,
+        "predicted": 4.63,
+        "persistence": 4.79
+      },
+      {
+        "hour": "2026-01-02T04:00:00+00:00",
+        "actual": 4.63,
+        "predicted": 4.7,
+        "persistence": 4.72
+      },
+      {
+        "hour": "2026-01-02T05:00:00+00:00",
+        "actual": 4.53,
+        "predicted": 4.73,
+        "persistence": 4.63
+      },
+      {
+        "hour": "2026-01-02T06:00:00+00:00",
+        "actual": 4.68,
+        "predicted": 4.77,
+        "persistence": 4.53
+      },
+      {
+        "hour": "2026-01-02T07:00:00+00:00",
+        "actual": 4.94,
+        "predicted": 5.03,
+        "persistence": 4.68
+      },
+      {
+        "hour": "2026-01-02T08:00:00+00:00",
+        "actual": 5.23,
+        "predicted": 5.37,
+        "persistence": 4.94
+      },
+      {
+        "hour": "2026-01-02T09:00:00+00:00",
+        "actual": 5.61,
+        "predicted": 5.75,
+        "persistence": 5.23
+      },
+      {
+        "hour": "2026-01-02T10:00:00+00:00",
+        "actual": 6.32,
+        "predicted": 6.13,
+        "persistence": 5.61
+      },
+      {
+        "hour": "2026-01-02T11:00:00+00:00",
+        "actual": 7.16,
+        "predicted": 6.9,
+        "persistence": 6.32
+      },
+      {
+        "hour": "2026-01-02T12:00:00+00:00",
+        "actual": 7.77,
+        "predicted": 7.67,
+        "persistence": 7.16
+      },
+      {
+        "hour": "2026-01-02T13:00:00+00:00",
+        "actual": 8.46,
+        "predicted": 8.18,
+        "persistence": 7.77
+      },
+      {
+        "hour": "2026-01-02T14:00:00+00:00",
+        "actual": 8.83,
+        "predicted": 8.76,
+        "persistence": 8.46
+      },
+      {
+        "hour": "2026-01-02T15:00:00+00:00",
+        "actual": 8.92,
+        "predicted": 8.99,
+        "persistence": 8.83
+      },
+      {
+        "hour": "2026-01-02T16:00:00+00:00",
+        "actual": 9.11,
+        "predicted": 8.92,
+        "persistence": 8.92
+      },
+      {
+        "hour": "2026-01-02T17:00:00+00:00",
+        "actual": 9.17,
+        "predicted": 8.98,
+        "persistence": 9.11
+      },
+      {
+        "hour": "2026-01-02T18:00:00+00:00",
+        "actual": 8.79,
+        "predicted": 8.93,
+        "persistence": 9.17
+      },
+      {
+        "hour": "2026-01-02T19:00:00+00:00",
+        "actual": 8.67,
+        "predicted": 8.45,
+        "persistence": 8.79
+      },
+      {
+        "hour": "2026-01-02T20:00:00+00:00",
+        "actual": 8.16,
+        "predicted": 8.2,
+        "persistence": 8.67
+      },
+      {
+        "hour": "2026-01-02T21:00:00+00:00",
+        "actual": 7.28,
+        "predicted": 7.65,
+        "persistence": 8.16
+      },
+      {
+        "hour": "2026-01-02T22:00:00+00:00",
+        "actual": 6.61,
+        "predicted": 6.74,
+        "persistence": 7.28
+      },
+      {
+        "hour": "2026-01-02T23:00:00+00:00",
+        "actual": 5.93,
+        "predicted": 6.08,
+        "persistence": 6.61
+      },
+      {
+        "hour": "2026-01-03T00:00:00+00:00",
+        "actual": 5.75,
+        "predicted": 5.48,
+        "persistence": 5.93
+      },
+      {
+        "hour": "2026-01-03T01:00:00+00:00",
+        "actual": 5.33,
+        "predicted": 5.42,
+        "persistence": 5.75
+      },
+      {
+        "hour": "2026-01-03T02:00:00+00:00",
+        "actual": 5.37,
+        "predicted": 5.1,
+        "persistence": 5.33
+      },
+      {
+        "hour": "2026-01-03T03:00:00+00:00",
+        "actual": 5.14,
+        "predicted": 5.22,
+        "persistence": 5.37
+      },
+      {
+        "hour": "2026-01-03T04:00:00+00:00",
+        "actual": 4.95,
+        "predicted": 5.08,
+        "persistence": 5.14
+      },
+      {
+        "hour": "2026-01-03T05:00:00+00:00",
+        "actual": 5.18,
+        "predicted": 5.0,
+        "persistence": 4.95
+      },
+      {
+        "hour": "2026-01-03T06:00:00+00:00",
+        "actual": 5.26,
+        "predicted": 5.33,
+        "persistence": 5.18
+      }
+    ],
+    "warnings": [
+      "xgboost not installed; XGBoost experiment skipped.",
+      "Trained and evaluated on synthetic data only; metrics do not indicate real-world accuracy.",
+      "Next-hour DO from current sensors is a different task from weather-driven overnight risk; this model is not used to correct the demo forecast."
+    ]
+  }
+}

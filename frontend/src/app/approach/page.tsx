@@ -44,7 +44,7 @@ const LAYERS: Layer[] = [
     inputs: ["Daytime cloud cover & sunlight", "Evening and overnight air temperature", "Night wind speed", "Rain"],
     outputs: ["Hourly weather features, 6 PM → 8 AM"],
     how: "Cloudy, hot, windless days are the classic set-up for a pre-dawn oxygen crash: algae make less oxygen by day and everything consumes more at night.",
-    limitations: ["Village-level weather, not pond-level microclimate.", "This demo uses scenario presets you can adjust."],
+    limitations: ["Village-level weather, not pond-level microclimate.", "The demo can use the live forecast or scenario presets you can adjust."],
     production: "Automatic Open-Meteo fetch at 4:30 PM daily per village.",
   },
   {
@@ -68,10 +68,10 @@ const LAYERS: Layer[] = [
     summary: "Learns where the physics model goes wrong.",
     inputs: ["Hour, temperature, cloud, sunlight, wind, rain, fish weight", "Physics baseline estimate"],
     outputs: ["Correction to the baseline curve"],
-    how: "A gradient-boosted model (XGBoost is planned) would be trained on measured oxygen readings matched with historical weather, predicting the error of the physics baseline.",
+    how: "The training pipeline runs today: it builds lag and time-of-day features, holds out whole ponds for testing, and compares ridge regression and gradient boosting against a persistence baseline. The current oxygen model is trained on simulated pond data; see Data & models for its test results.",
     limitations: [
-      "Candidate training data is from aquaponics ponds, which differ from earthen village ponds.",
-      "Not applied to any forecast unless the backend reports a trained model in use.",
+      "Trained on simulated pond data so far; aquaponics sensor data is the next source, and both differ from earthen village ponds.",
+      "Not applied to the risk score until it is trained and validated on measured pond oxygen.",
     ],
     production: "Train on local DO measurements once collected; ship only after validation against held-out ponds.",
   },
@@ -143,7 +143,7 @@ export default function ApproachPage() {
       <PageHeader
         eyebrow="How MeenMitra works"
         title="Approach explorer"
-        sub="A hybrid engine: a physics-inspired model that works from day one, a planned ML layer that learns its errors, and per-pond learning from farmer replies. Select a layer to see what it does and what is actually built."
+        sub="A hybrid engine: a physics-inspired model that works from day one, an ML layer that learns its errors (trained and tested on simulated pond data so far), and per-pond learning from farmer replies. Select a layer to see what it does and what is actually built."
       />
 
       <section className="hero" aria-label="Pipeline">

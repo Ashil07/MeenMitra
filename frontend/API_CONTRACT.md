@@ -39,7 +39,7 @@ The TypeScript source of truth for every payload is [`src/api/types.ts`](src/api
 | POST | `/alerts/{id}/deliveries` | `DeliveryRequest` | `Delivery` | Mock provider by default. `simulate_failure` is for demo only. |
 | POST | `/alerts/{id}/acknowledge` | `{ response: "1" }` | `Alert` | 409 if nothing has been delivered yet. |
 | GET | `/cooperative/overview` | – | `CooperativeOverview` | Reports are anonymised. Clusters are `possible` until an officer confirms. |
-| GET | `/ml/status` | – | `MlStatus` | Only real counts and metrics. Use `null` or `[]` when unknown. |
+| GET | `/ml/status` | – | `MlStatus` | Only real counts and metrics. Use `null` or `[]` when unknown. Optional per model: `data_origin` (`external`/`synthetic`) and `results` (the saved model's real predictions on held-out test rows). Demo mode reads them from `api/mock/ml_results.json`, written by `backend/scripts/export_demo_ml.py`. |
 
 ## Semantics the UI relies on
 

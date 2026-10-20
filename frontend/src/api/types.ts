@@ -405,6 +405,34 @@ export interface ModelInfoStatus {
   validated_for_karnataka_ponds: boolean;
   used_in_forecast: boolean;
   limitations: string[];
+  /** Whether training data was real external data or simulated. Optional. */
+  data_origin?: "external" | "synthetic";
+  /** The saved model's actual outputs on held-out test rows, from the last training run. Optional. */
+  results?: ModelResults;
+}
+
+export interface ClassificationSample {
+  inputs: Record<string, number>;
+  actual: string;
+  predicted: string;
+  /** Model probability of the predicted class, 0–1. */
+  confidence: number;
+}
+
+export interface SeriesPoint {
+  hour: string; // ISO time of the predicted hour
+  actual: number;
+  predicted: number;
+  baseline: number;
+}
+
+export interface ModelResults {
+  n_train: number;
+  n_test: number;
+  split: string;
+  confusion_matrix?: { labels: string[]; matrix: number[][] };
+  samples?: ClassificationSample[];
+  series?: { label: string; unit: string; baseline_label: string; points: SeriesPoint[] };
 }
 
 export interface EngineLayerStatus {
