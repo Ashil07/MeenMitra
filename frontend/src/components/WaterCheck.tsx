@@ -7,7 +7,7 @@ import type { Alert, Pond, Symptom, WaterCheck, WaterReadings } from "@/api/type
 import { SYMPTOMS } from "@/api/types";
 import { SYMPTOM_LABEL } from "@/lib/labels";
 import { formatDateTime } from "@/lib/time";
-import { useMutation } from "@/lib/useApi";
+import { useApiQuery, useMutation } from "@/lib/useApi";
 import { Icon } from "./Icon";
 import { MessagePreview } from "./MessagePreview";
 import { RiskBadge } from "./RiskBadge";
@@ -232,6 +232,7 @@ export function WaterCheckResult({ check: c, pond }: { check: WaterCheck; pond: 
           <Notice tone={c.result.refer_to_fisheries_officer ? "warn" : "info"} title="Disease & treatment need an expert.">
             MeenMitra cannot diagnose fish disease or recommend medicines. Please contact your fisheries extension officer or a qualified aquaculture professional.
           </Notice>
+          <CanalNotices checkId={c.id} canal={pond.canal} />
 
           {c.result.risk_level !== "safe" && (
             <div aria-live="polite">
@@ -266,6 +267,19 @@ export function WaterCheckResult({ check: c, pond }: { check: WaterCheck; pond: 
         </div>
       </div>
     </section>
+  );
+}
+
+/** Shows the anonymous outbreak notices this report triggered for other ponds on the same canal. */
+function CanalNotices({ checkId, canal }: { checkId: string; canal: string }) {
+  const q = useApiQuery(() => api.listAlerts({ kind: "outbreak_notice" }), [checkId]);
+  const count = (q.data ?? []).filter((a) => a.source_id === checkId).length;
+  if (!count) return null;
+  return (
+    <Notice tone="warn" title={`Neighbours on ${canal} will be warned.`}>
+      Outbreak notices drafted for {count} other pond{count === 1 ? "" : "s"} on this canal, without naming this farm.{" "}
+      <Link href="/alerts">Review them in the alert centre</Link>.
+    </Notice>
   );
 }
 

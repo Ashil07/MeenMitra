@@ -23,7 +23,7 @@ import type {
 } from "../types";
 import { SYMPTOMS } from "../types";
 import { DEMO_SCENARIOS, DISEASE_SYMPTOMS, demoForecast, demoWaterCheck } from "./generators";
-import { waterCheckMessage } from "./messages";
+import { outbreakNoticeMessage, waterCheckMessage } from "./messages";
 import { createSeedState, demoMlStatus, type MockState } from "./seed";
 
 export const MOCK_STORAGE_KEY = "meenmitra.mock.v1";
@@ -107,6 +107,8 @@ export function createMockApi(opts: MockOptions = {}): MeenMitraApi & { reset():
   }
 
   const nextId = (prefix: string) => `${prefix}-${++state.seq}`;
+  const bySeverity = (a: PondSummary, b: PondSummary) => SEVERITY[b.latest_risk] - SEVERITY[a.latest_risk];
+  const newestFirst = <T extends { created_at: string }>(a: T, b: T) => b.created_at.localeCompare(a.created_at);
 
   async function respond<T>(fn: () => T): Promise<T> {
     if (latency > 0) await new Promise((r) => setTimeout(r, latency));
@@ -127,10 +129,55 @@ export function createMockApi(opts: MockOptions = {}): MeenMitraApi & { reset():
     return a;
   }
 
-  function setRisk(p: Pond, level: RiskLevel, at: string, source: "forecast" | "water_check") {
-    p.latest_risk = level;
-    p.latest_risk_at = at;
-    p.latest_risk_source = source;
+  /**
+   * A pond's status is the WORSE of its latest forecast and its latest water check (ties go to the
+   * newer one), matching the seed data and the backend. A minor symptom report must not hide a
+   * Danger oxygen forecast for the same night.
+   */
+  function refreshRisk(p: Pond) {
+    const f = state.forecasts.filter((x) => x.pond_id === p.id).sort(newestFirst)[0];
+    const w = state.waterChecks.filter((x) => x.pond_id === p.id).sort(newestFirst)[0];
+    const candidates = [
+      f && { level: f.summary.risk_level, at: f.created_at, source: "forecast" as const },
+      w && { level: w.result.risk_level, at: w.created_at, source: "water_check" as const },
+    ].filter((c): c is { level: RiskLevel; at: string; source: "forecast" | "water_check" } => !!c);
+    const pick = candidates.sort((a, b) => SEVERITY[b.level] - SEVERITY[a.level] || b.at.localeCompare(a.at))[0];
+    p.latest_risk = pick?.level ?? "unknown";
+    p.latest_risk_at = pick?.at ?? null;
+    p.latest_risk_source = pick?.source ?? null;
+  }
+
+  /**
+   * "If one farm reports sick fish, farms on the same canal are warned first. Nobody's name is shared."
+   * Drafts one anonymous outbreak notice per other pond on the reporting pond's canal, unless that
+   * pond already has a notice from the last 7 days. Sending is a separate (simulated) step.
+   */
+  function draftOutbreakNotices(reporter: Pond, sourceId: string, at: string): number {
+    const weekAgo = Date.parse(at) - 7 * 86_400_000;
+    let drafted = 0;
+    for (const neighbour of state.ponds) {
+      if (neighbour.id === reporter.id || neighbour.canal !== reporter.canal) continue;
+      const recent = state.alerts.some((a) => a.pond_id === neighbour.id && a.kind === "outbreak_notice" && Date.parse(a.created_at) >= weekAgo);
+      if (recent) continue;
+      state.alerts.push({
+        id: nextId("al"),
+        pond_id: neighbour.id,
+        pond_name: neighbour.name,
+        kind: "outbreak_notice",
+        risk_level: "watch",
+        title: `Possible disease signs on ${reporter.canal}`,
+        source_id: sourceId,
+        status: "draft",
+        created_at: at,
+        acknowledged_at: null,
+        ack_response: null,
+        ...outbreakNoticeMessage(),
+        deliveries: [],
+        data_source: "demo",
+      });
+      drafted++;
+    }
+    return drafted;
   }
 
   function counts(): Record<PondRiskLevel, number> {
@@ -139,8 +186,6 @@ export function createMockApi(opts: MockOptions = {}): MeenMitraApi & { reset():
     return c;
   }
 
-  const bySeverity = (a: PondSummary, b: PondSummary) => SEVERITY[b.latest_risk] - SEVERITY[a.latest_risk];
-  const newestFirst = <T extends { created_at: string }>(a: T, b: T) => b.created_at.localeCompare(a.created_at);
 
   return {
     reset() {
@@ -246,9 +291,23 @@ export function createMockApi(opts: MockOptions = {}): MeenMitraApi & { reset():
         const scenario = DEMO_SCENARIOS.find((s) => s.id === req.scenario_id);
         if (!scenario)
           throw new ApiError({ kind: "validation", message: "Unknown scenario.", path: `/ponds/${pondId}/forecasts`, status: 422, fieldErrors: { scenario_id: "Unknown scenario." } });
-        const f = demoForecast({ id: nextId("fc"), pond, scenario, overrides: req.weather_overrides, feeding: req.feeding_this_evening, now: now() });
+        if (req.live_weather) {
+          const w = req.weather_overrides ?? {};
+          const keys = ["cloud_cover_pct", "air_temp_evening_c", "air_temp_min_c", "wind_speed_ms", "rain_mm"] as const;
+          if (keys.some((k) => typeof w[k] !== "number" || !Number.isFinite(w[k])))
+            throw new ApiError({ kind: "validation", message: "Live weather must include all five weather values.", path: `/ponds/${pondId}/forecasts`, status: 422 });
+        }
+        const f = demoForecast({
+          id: nextId("fc"),
+          pond,
+          scenario,
+          overrides: req.weather_overrides,
+          feeding: req.feeding_this_evening,
+          now: now(),
+          liveWeather: req.live_weather,
+        });
         state.forecasts.push(f);
-        setRisk(pond, f.summary.risk_level, f.created_at, "forecast");
+        refreshRisk(pond);
         return f;
       }),
 
@@ -285,7 +344,8 @@ export function createMockApi(opts: MockOptions = {}): MeenMitraApi & { reset():
           throw new ApiError({ kind: "validation", message: "Enter at least one reading or tick a symptom.", path, status: 422 });
         const wc = demoWaterCheck({ id: nextId("wc"), pondId, req, now: now() });
         state.waterChecks.push(wc);
-        setRisk(pond, wc.result.risk_level, wc.created_at, "water_check");
+        refreshRisk(pond);
+        if (req.symptoms.some((s) => DISEASE_SYMPTOMS.includes(s) || s === "dead_fish")) draftOutbreakNotices(pond, wc.id, wc.created_at);
         return wc;
       }),
 
