@@ -1500,3 +1500,48 @@ th.num {
   border-color: var(--line-strong);
   background: #fff;
 }
+
+/* ------------------------------------------------------------ touch screens / phones
+   Thumb-sized targets (>= 44 px, per common mobile guidelines) on touch devices and narrow screens. */
+@media (max-width: 960px), (pointer: coarse) {
+  .btn {
+    min-height: 44px;
+  }
+  .btn.sm {
+    min-height: 40px;
+    padding: 6px 14px;
+  }
+  .tab {
+    min-height: 44px;
+  }
+  .segmented label {
+    min-height: 40px;
+  }
+  .input,
+  .select,
+  .textarea {
+    min-height: 44px;
+    font-size: 16px; /* 16px stops iOS Safari from zooming into focused fields */
+  }
+  input[type="range"] {
+    min-height: 40px;
+  }
+}
+@media (max-width: 640px) {
+  .segmented {
+    display: flex;
+    width: 100%;
+  }
+  .segmented label {
+    flex: 1 1 auto;
+    justify-content: center;
+    text-align: center;
+  }
+  .demo-ribbon {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  .form-actions .btn {
+    flex: 1 1 auto;
+  }
+}

@@ -3,16 +3,20 @@
 import { useId, useState } from "react";
 import type { Forecast } from "@/api/types";
 import { formatClock, formatHourShort } from "@/lib/time";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 import { RISK_LABEL } from "./RiskBadge";
 
-const W = 720;
-const H = 300;
-const PAD = { l: 44, r: 16, t: 16, b: 34 };
+// The SVG scales to its container. On phones a 720-wide drawing would shrink its text to ~5 px,
+// so narrow screens get a phone-proportioned drawing instead.
+const WIDE = { W: 720, H: 300, PAD: { l: 44, r: 16, t: 16, b: 34 } };
+const NARROW = { W: 360, H: 260, PAD: { l: 34, r: 10, t: 14, b: 30 } };
 
 export function ForecastChart({ forecast, compact = false }: { forecast: Forecast; compact?: boolean }) {
   const [active, setActive] = useState<number | null>(null);
   const [showTable, setShowTable] = useState(false);
   const titleId = useId();
+  const narrow = useMediaQuery("(max-width: 520px)");
+  const { W, H, PAD } = narrow ? NARROW : WIDE;
   const pts = forecast.points;
   const { danger_below_mg_l: dangerT, watch_below_mg_l: watchT } = forecast.thresholds;
 
@@ -21,6 +25,7 @@ export function ForecastChart({ forecast, compact = false }: { forecast: Forecas
   const maxY = Math.max(10, Math.ceil(Math.max(...pts.map((p) => p.upper_mg_l ?? p.estimated_do_mg_l)) + 0.5));
   const x = (i: number) => PAD.l + (i * (W - PAD.l - PAD.r)) / Math.max(1, pts.length - 1);
   const y = (v: number) => PAD.t + (1 - Math.min(v, maxY) / maxY) * (H - PAD.t - PAD.b);
+  const slot = (W - PAD.l - PAD.r) / Math.max(1, pts.length - 1);
 
   const line = pts.map((p, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(p.estimated_do_mg_l).toFixed(1)}`).join(" ");
   const hasBand = pts.every((p) => p.lower_mg_l !== null && p.upper_mg_l !== null);
@@ -74,7 +79,7 @@ export function ForecastChart({ forecast, compact = false }: { forecast: Forecas
           mg/L (estimated)
         </text>
         {pts.map((p, i) =>
-          compact && i % 2 === 1 ? null : (
+          (compact || narrow) && i % 2 === 1 ? null : (
             <text key={p.time} x={x(i)} y={H - 12} textAnchor="middle" fontSize="11" fill="var(--muted)">
               {formatHourShort(p.time)}
             </text>
@@ -100,7 +105,7 @@ export function ForecastChart({ forecast, compact = false }: { forecast: Forecas
             onFocus={() => setActive(i)}
             onBlur={() => setActive(null)}
           >
-            <rect x={x(i) - 18} y={PAD.t} width={36} height={H - PAD.t - PAD.b} fill="transparent" />
+            <rect x={x(i) - slot / 2} y={PAD.t} width={slot} height={H - PAD.t - PAD.b} fill="transparent" />
             <circle
               className="ring"
               cx={x(i)}
