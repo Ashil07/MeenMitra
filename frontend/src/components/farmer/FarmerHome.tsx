@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ApiError, api, describeError } from "@/api";
-import type { Alert, FeedbackResponse, Pond, Symptom, WaterCheck } from "@/api/types";
+import type { Alert, FeedbackResponse, Forecast, Pond, Symptom, WaterCheck } from "@/api/types";
 import { useApiQuery, useMutation } from "@/lib/useApi";
+import { VALUE_NOTE, fishValueInr, formatInr } from "@/lib/value";
 import { Pictogram, type PictogramName } from "./Pictogram";
 import { useRememberedPond } from "./prefs";
 import { SpeakButton } from "./SpeakButton";
@@ -17,6 +18,7 @@ import {
   UI,
   relativeTime,
   stepsFor,
+  valueAtRiskText,
   type Lang,
   type StepId,
 } from "./strings";
@@ -63,6 +65,7 @@ export function FarmerError({ lang, error, onRetry }: { lang: Lang; error: unkno
 export function FarmerHome({ pondId, lang }: { pondId: string; lang: Lang }) {
   const pond = useApiQuery(() => api.getPond(pondId), [pondId]);
   const alerts = useApiQuery(() => api.listAlerts({ pond_id: pondId }), [pondId]);
+  const forecast = useApiQuery(() => api.getLatestForecast(pondId), [pondId]);
   const [, remember] = useRememberedPond();
   const loadedId = pond.data?.id;
 
@@ -92,11 +95,18 @@ export function FarmerHome({ pondId, lang }: { pondId: string; lang: Lang }) {
         </Link>
       </div>
 
-      <StatusCard pond={p} lang={lang} />
+      <StatusCard pond={p} forecast={forecast.data ?? null} lang={lang} />
       <Steps pond={p} lang={lang} />
       {message && <MessageCard alert={message} lang={lang} onChange={alerts.reload} />}
       <MorningCheck pondId={p.id} lang={lang} />
-      <ReportProblem pondId={p.id} lang={lang} onReported={pond.reload} />
+      <ReportProblem
+        pondId={p.id}
+        lang={lang}
+        onReported={() => {
+          pond.reload();
+          forecast.reload();
+        }}
+      />
     </>
   );
 }
@@ -116,13 +126,18 @@ export function latestMessage(alerts: Alert[], now: number = Date.now()): Alert 
   );
 }
 
-function StatusCard({ pond, lang }: { pond: Pond; lang: Lang }) {
+function StatusCard({ pond, forecast, lang }: { pond: Pond; forecast: Forecast | null; lang: Lang }) {
   const level = pond.latest_risk;
   const source = pond.latest_risk_source ?? "forecast";
   const word = STATUS_WORD[level][lang];
   const line = STATUS_LINE[source][level][lang];
   const steps = stepsFor(level, pond.has_aerator).map((s) => STEP_TEXT[s][lang]);
-  const spoken = [word, line, ...steps].join(". ");
+  // Only when tonight's Watch/Danger status comes from this forecast; never for a water check.
+  const atRisk =
+    forecast && source === "forecast" && level !== "safe" && level !== "unknown" && forecast.summary.risk_level === level
+      ? valueAtRiskText(formatInr(fishValueInr(pond.species, forecast.inputs.estimated_biomass_kg)), lang)
+      : null;
+  const spoken = [word, line, atRisk, ...steps].filter(Boolean).join(". ");
 
   return (
     <section className={`${styles.status} ${styles[`status_${level}`]}`} aria-labelledby="farmer-status" aria-live="polite">
@@ -133,6 +148,11 @@ function StatusCard({ pond, lang }: { pond: Pond; lang: Lang }) {
         </h1>
       </div>
       <p className={styles.statusLine}>{line}</p>
+      {atRisk && (
+        <p className={styles.statusLine} title={VALUE_NOTE}>
+          {atRisk}
+        </p>
+      )}
       {pond.latest_risk_at && (
         <p className={styles.statusMeta}>
           {UI.updated[lang]}: {relativeTime(pond.latest_risk_at, lang)}
@@ -274,6 +294,7 @@ function ReportProblem({ pondId, lang, onReported }: { pondId: string; lang: Lan
   const [picked, setPicked] = useState<Symptom[]>([]);
   const [result, setResult] = useState<WaterCheck | null>(null);
   const [needOne, setNeedOne] = useState(false);
+  const [canalWarned, setCanalWarned] = useState(false);
   const submit = useMutation(api.submitWaterCheck);
 
   const toggle = (s: Symptom) => {
@@ -292,6 +313,9 @@ function ReportProblem({ pondId, lang, onReported }: { pondId: string; lang: Lan
         symptoms: picked,
         notes: "Reported from the farmer screen",
       });
+      // Say neighbours will be warned only if notices were actually drafted for this report.
+      const notices = await api.listAlerts({ kind: "outbreak_notice" }).catch(() => []);
+      setCanalWarned(notices.some((a) => a.source_id === wc.id));
       setResult(wc);
       setPicked([]);
       onReported();
@@ -315,6 +339,7 @@ function ReportProblem({ pondId, lang, onReported }: { pondId: string; lang: Lan
               {UI.reportSent[lang]} {STATUS_WORD[result.result.risk_level][lang]}.
             </p>
             <p>{UI.medicine[lang]}</p>
+            {canalWarned && <p>{UI.canalWarned[lang]}</p>}
             <p className={styles.small}>{UI.notDiagnosis[lang]}</p>
           </div>
           <button type="button" className={styles.secondary} onClick={() => setResult(null)}>

@@ -71,6 +71,10 @@ export const UI = {
   },
   notDiagnosis: { kn: "ಇದು ರೋಗ ಪತ್ತೆ ಅಲ್ಲ.", en: "This is not a diagnosis." },
   reportAgain: { kn: "ಇನ್ನೊಂದು ವರದಿ", en: "Report something else" },
+  canalWarned: {
+    kn: "ನಿಮ್ಮ ಕಾಲುವೆಯ ಇತರ ಕೊಳಗಳಿಗೆ ನಿಮ್ಮ ಹೆಸರು ತಿಳಿಸದೆ ಎಚ್ಚರಿಕೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ.",
+    en: "Other ponds on your canal will be warned, without your name.",
+  },
 
   help: {
     kn: "ಸಹಾಯ ಬೇಕೇ? ನಿಮ್ಮ ಸಹಕಾರ ಸಂಘ ಅಥವಾ ಮೀನುಗಾರಿಕೆ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ.",
@@ -178,6 +182,11 @@ export const FARMER_SYMPTOMS: { id: Symptom; text: T }[] = [
   { id: "white_patches_or_fungus", text: { kn: "ಬಿಳಿ ಕಲೆ ಅಥವಾ ಹತ್ತಿಯಂತಹ ಬೆಳವಣಿಗೆ", en: "White patches or cotton-like growth" } },
   { id: "foul_smell", text: { kn: "ನೀರಿನಲ್ಲಿ ಕೆಟ್ಟ ವಾಸನೆ", en: "Bad smell from the water" } },
 ];
+
+/** "Fish worth about ₹1,77,000 are at risk." Value is a demo estimate (see lib/value.ts). */
+export function valueAtRiskText(formattedInr: string, lang: Lang): string {
+  return lang === "kn" ? `ಸುಮಾರು ${formattedInr} ಮೌಲ್ಯದ ಮೀನುಗಳು ಅಪಾಯದಲ್ಲಿವೆ.` : `Fish worth about ${formattedInr} are at risk.`;
+}
 
 /** "40 ನಿಮಿಷ ಹಿಂದೆ" / "40 min ago". */
 export function relativeTime(iso: string | null, lang: Lang, now: Date = new Date()): string {
