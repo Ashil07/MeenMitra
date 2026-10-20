@@ -5,8 +5,10 @@ import { useMemo, useState } from "react";
 import { api, describeError } from "@/api";
 import type { Alert, Forecast, Pond, ScenarioId, WeatherInputs } from "@/api/types";
 import { fmtInt } from "@/lib/labels";
+import { LiveWeatherError, OPEN_METEO_ATTRIBUTION, fetchVillageWeather, type LiveWeather } from "@/lib/liveWeather";
 import { formatClock, formatDateTime } from "@/lib/time";
 import { useApiQuery, useMutation } from "@/lib/useApi";
+import { VALUE_NOTE, fishValueInr, formatInr } from "@/lib/value";
 import { ForecastChart } from "./ForecastChart";
 import { Icon, type IconName } from "./Icon";
 import { MessagePreview } from "./MessagePreview";
@@ -32,6 +34,17 @@ export function ForecastExplorer({ pond, onChange }: { pond: Pond; onChange?: ()
   const [result, setResult] = useState<Forecast | null>(null);
   const [previous, setPrevious] = useState<Forecast | null>(null);
   const run = useMutation(api.runForecast);
+  const [source, setSource] = useState<"scenario" | "live">("scenario");
+  const [live, setLive] = useState<LiveState>({ status: "idle" });
+
+  async function loadLive() {
+    setLive({ status: "loading" });
+    try {
+      setLive({ status: "ok", data: await fetchVillageWeather(pond.village) });
+    } catch (e) {
+      setLive({ status: "error", error: e instanceof LiveWeatherError ? e.message : "Could not load live weather." });
+    }
+  }
 
   const scenario = scenarios.data?.find((s) => s.id === scenarioId);
   const weather: WeatherInputs | null = scenario ? { ...scenario.weather, ...overrides } : null;
@@ -39,7 +52,10 @@ export function ForecastExplorer({ pond, onChange }: { pond: Pond; onChange?: ()
 
   async function onRun() {
     try {
-      const f = await run.run(pond.id, { scenario_id: scenarioId, weather_overrides: Object.keys(overrides).length ? overrides : undefined, feeding_this_evening: feeding });
+      const f =
+        source === "live" && live.data
+          ? await run.run(pond.id, { scenario_id: "normal", weather_overrides: live.data.weather, feeding_this_evening: feeding, live_weather: live.data.info })
+          : await run.run(pond.id, { scenario_id: scenarioId, weather_overrides: Object.keys(overrides).length ? overrides : undefined, feeding_this_evening: feeding });
       setPrevious(shown);
       setResult(f);
       onChange?.();
@@ -57,11 +73,35 @@ export function ForecastExplorer({ pond, onChange }: { pond: Pond; onChange?: ()
         <div className="card-head">
           <div>
             <h2 id="inputs-h">Tonight&apos;s conditions</h2>
-            <p>Pick a weather scenario or fine-tune it, then run the forecast for {pond.name}.</p>
+            <p>Use tonight&apos;s live weather forecast, or pick a scenario and fine-tune it, then run the forecast for {pond.name}.</p>
           </div>
         </div>
 
         <div className="stack" style={{ gap: 16 }}>
+          <div className="segmented" role="radiogroup" aria-label="Weather source">
+            <label>
+              <input type="radio" name="weather-source" value="scenario" checked={source === "scenario"} onChange={() => setSource("scenario")} />
+              Weather scenario
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="weather-source"
+                value="live"
+                checked={source === "live"}
+                onChange={() => {
+                  setSource("live");
+                  if (live.status !== "ok" && live.status !== "loading") void loadLive();
+                }}
+              />
+              Live forecast · {pond.village}
+            </label>
+          </div>
+
+          {source === "live" && <LiveWeatherPanel live={live} village={pond.village} onRetry={loadLive} />}
+
+          {source === "scenario" && (
+            <>
           <div className="segmented" role="radiogroup" aria-label="Weather scenario">
             {scenarios.data?.map((s) => (
               <label key={s.id}>
@@ -119,6 +159,8 @@ export function ForecastExplorer({ pond, onChange }: { pond: Pond; onChange?: ()
               )}
             </details>
           )}
+            </>
+          )}
 
           <label className="check" style={{ maxWidth: 420 }}>
             <input type="checkbox" checked={feeding} onChange={(e) => setFeeding(e.target.checked)} />
@@ -130,7 +172,7 @@ export function ForecastExplorer({ pond, onChange }: { pond: Pond; onChange?: ()
           </label>
 
           <div className="row">
-            <button type="button" className="btn primary" onClick={onRun} disabled={run.pending || !scenario}>
+            <button type="button" className="btn primary" onClick={onRun} disabled={run.pending || !scenario || (source === "live" && live.status !== "ok")}>
               {run.pending ? <Spinner /> : <Icon name="forecast" />}
               {run.pending ? "Running forecast…" : shown ? "Rerun forecast" : "Run forecast"}
             </button>
@@ -161,6 +203,58 @@ export function ForecastExplorer({ pond, onChange }: { pond: Pond; onChange?: ()
   );
 }
 
+type LiveState = { status: "idle" | "loading" | "ok" | "error"; data?: LiveWeather; error?: string };
+
+function LiveWeatherPanel({ live, village, onRetry }: { live: LiveState; village: string; onRetry: () => void }) {
+  if (live.status === "loading" || live.status === "idle")
+    return (
+      <p className="small muted row">
+        <Spinner /> Fetching tonight&apos;s forecast for {village} from Open-Meteo…
+      </p>
+    );
+  if (live.status === "error" || !live.data)
+    return (
+      <Notice tone="error" title="Live weather unavailable">
+        {live.error} You can switch back to a weather scenario.{" "}
+        <button type="button" className="btn sm" onClick={onRetry} style={{ marginLeft: 6 }}>
+          Try again
+        </button>
+      </Notice>
+    );
+  const { weather: w, info } = live.data;
+  return (
+    <div className="card flat tint">
+      <div className="row between">
+        <strong>
+          <Icon name="cloud" size={16} /> Tonight in {info.place}
+        </strong>
+        <span className="tag implemented">Live forecast</span>
+      </div>
+      <dl className="kv small" style={{ marginTop: 10 }}>
+        <dt>Daytime cloud</dt>
+        <dd>{w.cloud_cover_pct}%</dd>
+        <dt>Daytime rain</dt>
+        <dd>{w.rain_mm} mm</dd>
+        <dt>Air temp</dt>
+        <dd>
+          {w.air_temp_evening_c} °C at 6 PM, {w.air_temp_min_c} °C overnight low
+        </dd>
+        <dt>Night wind</dt>
+        <dd>{w.wind_speed_ms} m/s</dd>
+      </dl>
+      <p className="tiny muted" style={{ marginTop: 8 }}>
+        {OPEN_METEO_ATTRIBUTION} · fetched {formatClock(info.fetched_at)} ·{" "}
+        {info.location_source === "district_default"
+          ? `"${village}" could not be located, so the Udupi district centre was used.`
+          : info.location_source === "geocoded"
+            ? `Located "${village}" by name.`
+            : "Approximate village location."}{" "}
+        Weather is a forecast, not an observation.
+      </p>
+    </div>
+  );
+}
+
 function ForecastResult({ forecast: f, pond }: { forecast: Forecast; pond: Pond }) {
   const maxFactor = useMemo(() => Math.max(0.01, ...f.factors.map((x) => x.magnitude_mg_l)), [f.factors]);
   const [alert, setAlert] = useState<Alert | null>(null);
@@ -185,6 +279,11 @@ function ForecastResult({ forecast: f, pond }: { forecast: Forecast; pond: Pond 
               Lowest estimate {f.summary.min_estimated_do_mg_l} mg/L at {formatClock(f.summary.min_time)}
               {f.summary.aerator_start_time ? ` · suggested aerator start ${formatClock(f.summary.aerator_start_time)}` : ""}
             </p>
+            {f.summary.risk_level !== "safe" && (
+              <p className="small" style={{ color: "#d7efe9" }} title={VALUE_NOTE}>
+                Fish worth about <strong>{formatInr(fishValueInr(pond.species, f.inputs.estimated_biomass_kg))}</strong> are at risk (demo estimate).
+              </p>
+            )}
           </div>
           <RiskBadge level={f.summary.risk_level} size="lg" />
         </div>
@@ -240,6 +339,12 @@ function ForecastResult({ forecast: f, pond }: { forecast: Forecast; pond: Pond 
               Inputs used
             </h3>
             <dl className="kv small">
+              <dt>Weather</dt>
+              <dd>
+                {f.inputs.live_weather
+                  ? `Live Open-Meteo forecast for ${f.inputs.live_weather.place}, fetched ${formatClock(f.inputs.live_weather.fetched_at)}`
+                  : "Scenario values"}
+              </dd>
               <dt>Cloud / rain</dt>
               <dd>
                 {f.inputs.weather.cloud_cover_pct}% · {f.inputs.weather.rain_mm} mm
@@ -259,6 +364,10 @@ function ForecastResult({ forecast: f, pond }: { forecast: Forecast; pond: Pond 
               <dt>Fish (est.)</dt>
               <dd>
                 ~{f.inputs.estimated_fish_weight_g} g each · ~{fmtInt(f.inputs.estimated_biomass_kg)} kg total
+              </dd>
+              <dt>Fish value (est.)</dt>
+              <dd title={VALUE_NOTE}>
+                ~{formatInr(fishValueInr(pond.species, f.inputs.estimated_biomass_kg))} <span className="muted">(demo price per kg)</span>
               </dd>
               <dt>Pond factor</dt>
               <dd>

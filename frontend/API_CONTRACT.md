@@ -28,7 +28,7 @@ The TypeScript source of truth for every payload is [`src/api/types.ts`](src/api
 | GET | `/ponds/{id}` | – | `Pond` | 404 `{"detail":"Pond not found"}`. |
 | PATCH | `/ponds/{id}` | `Partial<PondInput>` | `Pond` | |
 | GET | `/forecast/scenarios` | – | `Scenario[]` | ids: `normal`, `cloudy_hot`, `high_risk`. |
-| POST | `/ponds/{id}/forecasts` | `ForecastRequest` | `Forecast` | Persists and updates the pond's `latest_risk`. |
+| POST | `/ponds/{id}/forecasts` | `ForecastRequest` | `Forecast` | Persists and updates the pond's `latest_risk`. Optional `live_weather` (provider, place, coordinates, fetched_at) marks `weather_overrides` as a live Open-Meteo forecast; it is echoed in `inputs.live_weather`. |
 | GET | `/ponds/{id}/forecasts/latest` | – | `Forecast \| null` | **200 with `null`** when there is no forecast yet. |
 | GET | `/ponds/{id}/water-checks` | – | `WaterCheck[]` | Newest first. |
 | POST | `/ponds/{id}/water-checks` | `WaterCheckRequest` | `WaterCheck` | 422 if no readings and no symptoms. |

@@ -5,6 +5,7 @@
  */
 import type { AlertMessage, RiskLevel, WaterFinding } from "../types";
 import { istHour } from "@/lib/time";
+import { formatInr } from "@/lib/value";
 
 function kannadaTime(iso: string): string {
   const h = istHour(iso);
@@ -27,8 +28,12 @@ export function forecastMessage(opts: {
   lowTime: string;
   aeratorTime: string | null;
   hasAerator: boolean;
+  /** Rough value of the fish in the pond (demo estimate); adds an "at risk" line to Watch/Danger. */
+  valueInr?: number;
 }): AlertMessage {
   const { pondName: p, risk, lowTime } = opts;
+  const atRiskKn = opts.valueInr ? `\nಸುಮಾರು ${formatInr(opts.valueInr)} ಮೌಲ್ಯದ ಮೀನುಗಳು ಅಪಾಯದಲ್ಲಿವೆ.` : "";
+  const atRiskEn = opts.valueInr ? `\nFish worth about ${formatInr(opts.valueInr)} are at risk.` : "";
   if (risk === "danger") {
     const aer = opts.aeratorTime ?? lowTime;
     const aerKn = opts.hasAerator
@@ -38,15 +43,15 @@ export function forecastMessage(opts: {
       ? `• Start the aerator at ${englishTime(aer)}`
       : "• No aerator? Arrange an aerator or pump from a neighbour";
     return {
-      message_kn: `ಅಪಾಯ: ಇಂದು ರಾತ್ರಿ "${p}" ಕೊಳದಲ್ಲಿ ಆಮ್ಲಜನಕ ${kannadaTime(lowTime)} ಸುಮಾರಿಗೆ ತುಂಬಾ ಕಡಿಮೆಯಾಗಬಹುದು.\nಹೀಗೆ ಮಾಡಿ:\n• ಇಂದು ಸಂಜೆ ಮೀನುಗಳಿಗೆ ಆಹಾರ ಹಾಕಬೇಡಿ\n${aerKn}\n1 ಎಂದು ಉತ್ತರಿಸಿ = ಸರಿ, ಮಾಡುತ್ತೇನೆ`,
-      message_en: `DANGER tonight for your pond "${p}". Oxygen may fall too low around ${englishTime(lowTime)}.\nDo this:\n• Don't feed the fish this evening\n${aerEn}\nReply 1 = OK, will do`,
+      message_kn: `ಅಪಾಯ: ಇಂದು ರಾತ್ರಿ "${p}" ಕೊಳದಲ್ಲಿ ಆಮ್ಲಜನಕ ${kannadaTime(lowTime)} ಸುಮಾರಿಗೆ ತುಂಬಾ ಕಡಿಮೆಯಾಗಬಹುದು.${atRiskKn}\nಹೀಗೆ ಮಾಡಿ:\n• ಇಂದು ಸಂಜೆ ಮೀನುಗಳಿಗೆ ಆಹಾರ ಹಾಕಬೇಡಿ\n${aerKn}\n1 ಎಂದು ಉತ್ತರಿಸಿ = ಸರಿ, ಮಾಡುತ್ತೇನೆ`,
+      message_en: `DANGER tonight for your pond "${p}". Oxygen may fall too low around ${englishTime(lowTime)}.${atRiskEn}\nDo this:\n• Don't feed the fish this evening\n${aerEn}\nReply 1 = OK, will do`,
       kannada_reviewed: false,
     };
   }
   if (risk === "watch") {
     return {
-      message_kn: `ಎಚ್ಚರಿಕೆ: ಇಂದು ರಾತ್ರಿ "${p}" ಕೊಳದಲ್ಲಿ ಆಮ್ಲಜನಕ ${kannadaTime(lowTime)} ಸುಮಾರಿಗೆ ಕಡಿಮೆಯಾಗಬಹುದು.\nಹೀಗೆ ಮಾಡಿ:\n• ಇಂದು ಸಂಜೆ ಆಹಾರವನ್ನು ಅರ್ಧದಷ್ಟು ಕಡಿಮೆ ಮಾಡಿ\n• ಏರೇಟರ್ ಸಿದ್ಧವಾಗಿಡಿ\n• ಬೆಳಗಿನ ಜಾವ ಮೀನುಗಳನ್ನು ಗಮನಿಸಿ\n1 ಎಂದು ಉತ್ತರಿಸಿ = ಸರಿ`,
-      message_en: `WATCH tonight for your pond "${p}". Oxygen may run low around ${englishTime(lowTime)}.\nDo this:\n• Cut this evening's feed by half\n• Keep the aerator ready\n• Check the fish before dawn\nReply 1 = OK`,
+      message_kn: `ಎಚ್ಚರಿಕೆ: ಇಂದು ರಾತ್ರಿ "${p}" ಕೊಳದಲ್ಲಿ ಆಮ್ಲಜನಕ ${kannadaTime(lowTime)} ಸುಮಾರಿಗೆ ಕಡಿಮೆಯಾಗಬಹುದು.${atRiskKn}\nಹೀಗೆ ಮಾಡಿ:\n• ಇಂದು ಸಂಜೆ ಆಹಾರವನ್ನು ಅರ್ಧದಷ್ಟು ಕಡಿಮೆ ಮಾಡಿ\n• ಏರೇಟರ್ ಸಿದ್ಧವಾಗಿಡಿ\n• ಬೆಳಗಿನ ಜಾವ ಮೀನುಗಳನ್ನು ಗಮನಿಸಿ\n1 ಎಂದು ಉತ್ತರಿಸಿ = ಸರಿ`,
+      message_en: `WATCH tonight for your pond "${p}". Oxygen may run low around ${englishTime(lowTime)}.${atRiskEn}\nDo this:\n• Cut this evening's feed by half\n• Keep the aerator ready\n• Check the fish before dawn\nReply 1 = OK`,
       kannada_reviewed: false,
     };
   }

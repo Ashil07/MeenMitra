@@ -10,18 +10,22 @@ import type {
   Forecast,
   ForecastFactor,
   ForecastPoint,
+  LiveWeatherInfo,
   Pond,
   RiskLevel,
   Scenario,
-  Species,
   Symptom,
   WaterCheck,
   WaterCheckRequest,
   WaterFinding,
   WeatherInputs,
 } from "../types";
-import { daysBetween, formatClock, istDateString, istIso } from "@/lib/time";
+import { demoBiomassKg, demoFishWeightG } from "@/lib/growth";
+import { formatClock, istDateString, istIso } from "@/lib/time";
+import { fishValueInr } from "@/lib/value";
 import { forecastMessage } from "./messages";
+
+export { demoFishWeightG };
 
 export const DEMO_THRESHOLDS = { danger_below_mg_l: 3, watch_below_mg_l: 5 } as const;
 
@@ -46,15 +50,6 @@ export const DEMO_SCENARIOS: Scenario[] = [
   },
 ];
 
-const SPECIES_GROWTH: Record<Species, { winf: number; r: number }> = {
-  rohu: { winf: 1500, r: 0.022 },
-  catla: { winf: 2000, r: 0.025 },
-  mrigal: { winf: 1000, r: 0.02 },
-  tilapia: { winf: 600, r: 0.03 },
-  pangasius: { winf: 2000, r: 0.03 },
-  other: { winf: 1000, r: 0.022 },
-};
-
 const round = (n: number, dp = 2) => Math.round(n * 10 ** dp) / 10 ** dp;
 const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n));
 
@@ -64,13 +59,6 @@ function levelFor(doMgL: number): RiskLevel {
   return "safe";
 }
 
-export function demoFishWeightG(species: Species, stockingDate: string, now: Date): number {
-  const g = SPECIES_GROWTH[species];
-  const days = Math.max(0, daysBetween(stockingDate, now));
-  const w0 = 10;
-  return round(g.winf / (1 + ((g.winf - w0) / w0) * Math.exp(-g.r * days)), 0);
-}
-
 export function demoForecast(opts: {
   id: string;
   pond: Pond;
@@ -78,12 +66,13 @@ export function demoForecast(opts: {
   overrides?: Partial<WeatherInputs>;
   feeding: boolean;
   now: Date;
+  liveWeather?: LiveWeatherInfo;
 }): Forecast {
   const { pond, scenario, feeding, now } = opts;
   const w: WeatherInputs = { ...scenario.weather, ...(opts.overrides ?? {}) };
 
   const weightG = demoFishWeightG(pond.species, pond.stocking_date, now);
-  const biomassKg = round((pond.fish_count * 0.85 * weightG) / 1000, 0);
+  const biomassKg = demoBiomassKg(pond.fish_count, weightG);
   const volumeM3 = pond.area_m2 * pond.depth_m;
   const density = clamp(biomassKg / Math.max(volumeM3, 1) / 0.5, 0.5, 1.8);
   const algae = pond.algae_level === "high" ? 1.15 : pond.algae_level === "low" ? 0.9 : 1;
@@ -214,6 +203,7 @@ export function demoForecast(opts: {
       estimated_fish_weight_g: weightG,
       estimated_biomass_kg: biomassKg,
       oxygen_use_factor: pond.oxygen_use_factor,
+      live_weather: opts.liveWeather ?? null,
     },
     thresholds: { ...DEMO_THRESHOLDS },
     points,
@@ -235,6 +225,7 @@ export function demoForecast(opts: {
       lowTime: (firstDanger ?? firstWatch ?? min).time,
       aeratorTime: aeratorStart,
       hasAerator: pond.has_aerator,
+      valueInr: fishValueInr(pond.species, biomassKg),
     }),
   };
 }

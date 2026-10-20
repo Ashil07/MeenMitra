@@ -96,11 +96,25 @@ export interface Scenario {
   weather: WeatherInputs;
 }
 
+/** Where tonight's weather came from when it was fetched live rather than taken from a scenario. */
+export interface LiveWeatherInfo {
+  provider: "open-meteo";
+  /** Place the weather was fetched for, e.g. "Brahmavar". */
+  place: string;
+  latitude: number;
+  longitude: number;
+  /** "geocoded" = located by name via Open-Meteo geocoding; "village_table" = built-in approximate village point. */
+  location_source: "geocoded" | "village_table" | "district_default";
+  fetched_at: string; // ISO 8601
+}
+
 export interface ForecastRequest {
   scenario_id: ScenarioId;
   /** Optional overrides of the scenario weather. */
   weather_overrides?: Partial<WeatherInputs>;
   feeding_this_evening: boolean;
+  /** Set when weather_overrides hold a live Open-Meteo forecast (all five fields). */
+  live_weather?: LiveWeatherInfo;
 }
 
 export interface ForecastPoint {
@@ -146,6 +160,8 @@ export interface Forecast {
     estimated_fish_weight_g: number;
     estimated_biomass_kg: number;
     oxygen_use_factor: number;
+    /** Present when the weather came from a live forecast instead of a scenario. */
+    live_weather?: LiveWeatherInfo | null;
   };
   thresholds: { danger_below_mg_l: number; watch_below_mg_l: number };
   points: ForecastPoint[];
